@@ -10,7 +10,7 @@ let Playlist;
 let User;
 let Song;
 
-const {isDefined} = require('../util/util.js')
+const {isDefined} = require('../util/Util');
 
 class DatabaseManager {
 

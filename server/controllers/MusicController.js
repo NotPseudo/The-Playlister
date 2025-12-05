@@ -2,7 +2,7 @@ const auth = require('../auth/Auth.js')
 
 const { DB, Playlist } = require('../db/DatabaseManager')
 
-const {isDefined} = require('../util/util.js')
+const {isDefined} = require('../util/Util')
 
 async function doesUserIdOwnPlaylistId(userId, playlistId) {
     let user = await DB.findUser({_id: userId});
