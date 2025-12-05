@@ -10,6 +10,8 @@ let Playlist;
 let User;
 let Song;
 
+const {isDefined} = require('../util/util.js')
+
 class DatabaseManager {
 
     constructor() {
@@ -143,40 +145,151 @@ class DatabaseManager {
         } 
     }
 
-    async updatePlaylist(playlist, newData) {
-        //playlist.name = newPlaylist.name;
-        //playlist.songs = newPlaylist.songs;
-        // for (let key in newData) {
-        //     playlist[key] = newData[key];
-        // }
+    async updatePlaylist(playlistId, newName, newSongs) {
         console.log("updatePlaylist new playlist: " + playlist);
+        let updateOptions = {};
+        if (isDefined(newName) || isDefined(newSongs)) {
+            updateOptions.$set = {};
+            if (isDefined(newName)) updateOptions.$set.name = newName;
+            if (isDefined(newSongs)) updateOptions.$set.songs = newSongs;
+        }
         try {
-            await Playlist.updateOne({_id: playlist._id}, {$set : newData});
-            return true;
+            return await Playlist.findOneAndUpdate({_id: playlistId}, updateOptions, {new: true});
         } catch (err) {
             console.log("Couldn't update playlsit: " + err)
-            return false;
+            return null;
         }
     }
 
-    async updateUser(user, newData) {
-        // for (let key in newData) {
-        //     user[key] = newData[key];
-        // }
+    async addSongToPlaylist(playlistId, newSong, index) {
+        let updateOptions = {};
+        if (isDefined(newSong)) {
+            updateOptions.$push = {songs : {$each: [newSong], $position: index}};
+        }
         try {
-            await User.updateOne({_id: user._id}, {$set: newData});
-            return true;
+            return await Playlist.findOneAndUpdate({_id: playlistId}, updateOptions, {new: true});
         } catch (err) {
-            return false;
+            console.log("Couldn't add new song to playlsit: " + err)
+            return null;
         }
     }
 
-    async updateSong(song, newData) {
+    async removeSongFromPlaylist(playlistId, removeSong) {
+        let updateOptions = {};
+        if (isDefined(newSong)) {
+            updateOptions.$pull = {songs : removeSong};
+        }
         try {
-            await Song.updateOne({_id: song._id}, {$set: newData});
-            return true;
+            return await Playlist.findOneAndUpdate({_id: playlistId}, updateOptions, {new: true});
         } catch (err) {
-            return false;
+            console.log("Couldn't remove song from playlsit: " + err)
+            return null;
+        }
+    }
+
+    async addListenerToPlaylist(playlistId, newListener) {
+        let updateOptions = {};
+        if (isDefined(newListener)) {
+            updateOptions.$addToSet = {uniqueListeners : newListener};
+        }
+        try {
+            return await Playlist.findOneAndUpdate({_id: playlistId}, updateOptions, {new: true});
+        } catch (err) {
+            console.log("Couldn't add new listener to playlsit: " + err)
+            return null;
+        }
+    }
+
+    async removeListenerFromPlaylist(playlistId, removeListener) {
+        let updateOptions = {};
+        if (isDefined(removeListener)) {
+            updateOptions.$pull = {uniqueListeners : removeListener};
+        }
+        try {
+            return await Playlist.findOneAndUpdate({_id: playlistId}, updateOptions, {new: true});
+        } catch (err) {
+            console.log("Couldn't remove listener from playlsit: " + err)
+            return null;
+        }
+    }
+
+    async updateUser(userId, newUsername, newAvatar, newPasswordHash) {
+        let updateOptions = {};
+        if (isDefined(newUsername) || isDefined(newAvatar) || isDefined(newPasswordHash)) {
+            updateOptions.$set = {};
+            if (isDefined(newUsername)) updateOptions.$set.username = newUsername;
+            if (isDefined(newAvatar)) updateOptions.$set.avatar = newAvatar;
+            if (isDefined(newPasswordHash)) updateOptions.$set.passwordHash = newPasswordHash;
+        }
+        try {
+            return await User.findOneAndUpdate({_id: userId}, updateOptions, {new: true});
+        } catch (err) {
+            return null;
+        }
+    }
+
+    async addPlaylistToUser(userId, newPlaylist) {
+        let updateOptions = {};
+        if (isDefined(newPlaylist)) {
+            updateOptions.$addToSet = {playlists: newPlaylist};
+        }
+        try {
+            return await User.findOneAndUpdate({_id: userId}, updateOptions, {new: true});
+        } catch (err) {
+            return null;
+        }
+    }
+
+    async removePlaylistFromUser(userId, removeList) {
+        let updateOptions = {};
+        if (isDefined(removeList)) {
+            updateOptions.$pull = {playlists: removeList};
+        }
+        try {
+            return await User.findOneAndUpdate({_id: userId}, updateOptions, {new: true});
+        } catch (err) {
+            return null;
+        }
+    }
+
+    async updateSong(songId, newTitle, newArtist, newYear, newYouTubeId, newListenCount) {
+        let updateOptions = {};
+        if (isDefined(newTitle) || isDefined(newArtist) || isDefined(newYear) || isDefined(newYouTubeId) || isDefined(newListenCount)) {
+            updateOptions.$set = {};
+            if (isDefined(newTitle)) updateOptions.$set.title = newTitle;
+            if (isDefined(newArtist)) updateOptions.$set.artist = newArtist;
+            if (isDefined(newYear)) updateOptions.$set.year = newYear;
+            if (isDefined(newYouTubeId)) updateOptions.$set.youTubeId = newYouTubeId;
+            if (isDefined(newListenCount)) updateOptions.$set.listens = newListenCount
+        }
+        try {
+            return await Song.findOneAndUpdate({_id: songId}, updateOptions, {new: true});
+        } catch (err) {
+            return null;
+        }
+    }
+
+    async addPlaylistToSong(songId, newPlaylist) {
+        let updateOptions = {};
+        if (isDefined(newPlaylist)) {
+            updateOptions.$addToSet = {playlists: newPlaylist};
+        }
+        try {
+            return await Song.findOneAndUpdate({_id: songId}, updateOptions, {new: true});
+        } catch (err) {
+            return null;
+        }
+    }
+
+    async removePlaylistFromSong(songId, removeList) {
+        let updateOptions = {};
+        if (isDefined(removeList)) {
+            updateOptions.$pull = {playlists: removeList};
+        }
+        try {
+            return await Song.findOneAndUpdate({_id: songId}, updateOptions, {new: true});
+        } catch (err) {
+            return null;
         }
     }
 
@@ -193,4 +306,6 @@ class DatabaseManager {
     }
 }
 
-module.exports = DatabaseManager;
+const DB = new DatabaseManager();
+
+module.exports = { DatabaseManager, DB, Playlist, User, Song };
