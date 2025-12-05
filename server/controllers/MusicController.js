@@ -79,7 +79,8 @@ createSong = async (req, res) => {
 deletePlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
+            success: false,
+            error: 'UNAUTHORIZED'
         })
     }
     console.log("delete Playlist with id: " + JSON.stringify(req.params.id));
@@ -98,7 +99,8 @@ deletePlaylist = async (req, res) => {
 deleteSong = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
+            success: false,
+            error: 'UNAUTHORIZED'
         })
     }
     let song = await DB.findSong({_id: req.params.id});
@@ -129,7 +131,7 @@ playlistInstanceToJSON = async (instance) => {
 getPlaylistById = async (req, res) => {
     console.log("Find Playlist with id: " + JSON.stringify(req.params.id));
     let playlist = await DB.findPlaylist({ _id: req.params.id });
-    if (!playlist) return res.status(400).json({ success: false, errorMessage: 'Playlist not found!' });
+    if (!playlist) return res.status(400).json({ success: false, error: 'Playlist not found!' });
     console.log("Found list: " + JSON.stringify(playlist));
     let returnPlaylist = await playlistInstanceToJSON(playlist);
     return res.status(200).json({ success: true, playlist: returnPlaylist })
@@ -138,7 +140,7 @@ getPlaylistById = async (req, res) => {
 getSongById = async (req, res) => {
     // if(auth.verifyUser(req) === null){
     //     return res.status(400).json({
-    //         errorMessage: 'UNAUTHORIZED'
+    //         error: 'UNAUTHORIZED'
     //     })
     // }
     console.log("Song with id: " + JSON.stringify(req.params.id));
@@ -154,15 +156,15 @@ getSongById = async (req, res) => {
 // getPlaylistPairs = async (req, res) => {
 //     if(auth.verifyUser(req) === null){
 //         return res.status(400).json({
-//             errorMessage: 'UNAUTHORIZED'
+//             error: 'UNAUTHORIZED'
 //         })
 //     }
 //     console.log("getPlaylistPairs");
 
 //     let user = await db.findUser({ id: req.userId });
-//     if (!user) return res.status(400).json({ success: false, errorMessage: 'User not found!' });
+//     if (!user) return res.status(400).json({ success: false, error: 'User not found!' });
 //     let playlists = await db.findPlaylists({ ownerEmail: user.email });
-//     if (!playlists) return res.status(400).json({ success: false, errorMessage: 'Playlists not found!' });
+//     if (!playlists) return res.status(400).json({ success: false, error: 'Playlists not found!' });
 //     console.log("Send the Playlist pairs");
 //     //console.log(playlists);
 //     // PUT ALL THE LISTS INTO ID, NAME PAIRS
@@ -215,7 +217,7 @@ getSongById = async (req, res) => {
 // getPlaylists = async (req, res) => {
 //     if(auth.verifyUser(req) === null){
 //         return res.status(400).json({
-//             errorMessage: 'UNAUTHORIZED'
+//             error: 'UNAUTHORIZED'
 //         })
 //     }
 //     let playlists = await db.findPlaylists({});
@@ -295,42 +297,8 @@ updatePlaylistRemoveSong = async (req, res) => {
 updatePlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
-    if (!req.body) {
-        return res.status(400).json({
             success: false,
-            error: 'You must provide a body to update',
-        })
-    }
-    console.log("updatePlaylist: " + JSON.stringify(body));
-    console.log("req.params: " + JSON.stringify(req.params));
-
-    if (!await doesUserIdOwnPlaylistId(req.userId, req.params.id)) return res.status(400).json({success: false, error: "User does not own the playlist"});
-    
-    switch (req.body.updateType) {
-        case "changeName":
-            return await updatePlaylistChangeName(req, res);
-            break;
-        case "createSong":
-            return await updatePlaylistCreateSong(req, res);
-            break;
-        case "moveSong":
-            return await updatePlaylistMoveSong(req, res);
-            break;
-        case "removeSong":
-            return await updatePlaylistRemoveSong(req, res);
-            break;
-        default:
-            return res.status(400).json({ success: false, error: 'Invalid update type not found!' });
-    }
-}
-
-updatePlaylist = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
+            error: 'UNAUTHORIZED'
         })
     }
     if (!req.body) {
@@ -365,7 +333,8 @@ updatePlaylist = async (req, res) => {
 updateSong = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
+            success: false,
+            error: 'UNAUTHORIZED'
         })
     }
     if (!req.body) {
@@ -384,7 +353,8 @@ updateSong = async (req, res) => {
 listenToPlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
+            success: false,
+            error: 'UNAUTHORIZED'
         })
     }
     await DB.addListenerToPlaylist(req.userId, req.params.id);
