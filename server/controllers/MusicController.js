@@ -37,7 +37,7 @@ createPlaylist = async (req, res) => {
     if (!playlist) {
         return res.status(400).json({ success: false, error: "Playlist not created" })
     }
-    let returnPlaylist = playlist.toJSON();
+    let returnPlaylist = await playlistInstanceToJSON(playlist);
     console.log("In createPlaylist after playlist.toJSON(): " + JSON.stringify(returnPlaylist));
     let user = await DB.findUser({_id: req.userId});
     console.log("user found: " + JSON.stringify(user));
@@ -71,9 +71,9 @@ createSong = async (req, res) => {
     if (!song) {
         return res.status(400).json({ success: false, error: "Song not created" })
     }
-    let returnSong = song.toJSON();
+    let returnSong = songInstanceToJSON(song);
     console.log("In createSong after song.toJSON(): " + JSON.stringify(returnSong));
-    return res.status(201).json({ success: true, playlist: returnPlaylist })
+    return res.status(201).json({ success: true, song: returnSong })
 }
 
 deletePlaylist = async (req, res) => {
@@ -111,18 +111,27 @@ deleteSong = async (req, res) => {
     return res.status(200).json({success: true});
 }
 
-getPlaylistById = async (req, res) => {
-    // if(auth.verifyUser(req) === null){
-    //     return res.status(400).json({
-    //         errorMessage: 'UNAUTHORIZED'
-    //     })
-    // }
-    console.log("Find Playlist with id: " + JSON.stringify(req.params.id));
+songInstanceToJSON = (instance) => {
+    let songJSON = instance.toJSON();
+    songJSON.playlists = instance.playlists.length;
+    return songJSON;
+}
 
-    let playlist = await DB.findPlaylist({ _id: req.params.id }).populate("songs");
+playlistInstanceToJSON = async (instance) => {
+    let playlist = await instance.populate("songs");
+    let songs = playlist.songs.map(s => songInstanceToJSON(s));
+    let playlistJSON = playlist.toJSON();
+    playlistJSON.songs = songs;
+    playlistJSON.uniqueListeners = playlist.uniqueListeners.length;
+    return playlistJSON;
+}
+
+getPlaylistById = async (req, res) => {
+    console.log("Find Playlist with id: " + JSON.stringify(req.params.id));
+    let playlist = await DB.findPlaylist({ _id: req.params.id });
     if (!playlist) return res.status(400).json({ success: false, errorMessage: 'Playlist not found!' });
     console.log("Found list: " + JSON.stringify(playlist));
-    let returnPlaylist = playlist.toJSON();
+    let returnPlaylist = await playlistInstanceToJSON(playlist);
     return res.status(200).json({ success: true, playlist: returnPlaylist })
 }
 
@@ -138,7 +147,7 @@ getSongById = async (req, res) => {
     if (!song) return res.status(400).json({ success: false, error: 'Song not found!' });
     console.log("Found song: " + JSON.stringify(song));
 
-    let returnSong = song.toJSON();
+    let returnSong = songInstanceToJSON(song);
     return res.status(200).json({ success: true, song: returnSong })
 }
 
@@ -203,34 +212,35 @@ getSongById = async (req, res) => {
 //     // }).catch(err => console.log(err))
 // }
 
-getPlaylists = async (req, res) => {
-    if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            errorMessage: 'UNAUTHORIZED'
-        })
-    }
-    let playlists = await db.findPlaylists({});
-    if (!playlists || !playlists.length) return res.status(404).json({ success: false, error: `Playlists not found` });
-    playlists = playlists.map(p => p.toJSON());
-    return res.status(200).json({ success: true, data: playlists })
-    // await Playlist.find({}, (err, playlists) => {
-    //     if (err) {
-    //         return res.status(400).json({ success: false, error: err })
-    //     }
-    //     if (!playlists.length) {
-    //         return res
-    //             .status(404)
-    //             .json({ success: false, error: `Playlists not found` })
-    //     }
-    //     return res.status(200).json({ success: true, data: playlists })
-    // }).catch(err => console.log(err))
-}
+// getPlaylists = async (req, res) => {
+//     if(auth.verifyUser(req) === null){
+//         return res.status(400).json({
+//             errorMessage: 'UNAUTHORIZED'
+//         })
+//     }
+//     let playlists = await db.findPlaylists({});
+//     if (!playlists || !playlists.length) return res.status(404).json({ success: false, error: `Playlists not found` });
+//     playlists = playlists.map(p => p.toJSON());
+//     return res.status(200).json({ success: true, data: playlists })
+//     // await Playlist.find({}, (err, playlists) => {
+//     //     if (err) {
+//     //         return res.status(400).json({ success: false, error: err })
+//     //     }
+//     //     if (!playlists.length) {
+//     //         return res
+//     //             .status(404)
+//     //             .json({ success: false, error: `Playlists not found` })
+//     //     }
+//     //     return res.status(200).json({ success: true, data: playlists })
+//     // }).catch(err => console.log(err))
+// }
 
 updatePlaylistChangeName = async (req, res) => {
     if (!isDefined(req.body.name)) return res.status(400).json({ success: false, error: "New list name not provided"});
     let updatedPlaylist = await DB.updatePlaylist(req.params.id, req.body.name, null)
     if (!updatedPlaylist) return res.status(500).json({ success: false, error: "Unable to change list name"});
-    return res.status(200).json({ success: true, playlist: updatedPlaylist.toJSON()});
+    let returnPlaylist = await playlistInstanceToJSON(updatedPlaylist);
+    return res.status(200).json({ success: true, playlist: returnPlaylist});
 }
 
 updatePlaylistCreateSong = async (req, res) => {
@@ -246,7 +256,8 @@ updatePlaylistCreateSong = async (req, res) => {
     await DB.addPlaylistToSong(songId, req.params.id);
     let updatedPlaylist = await DB.addSongToPlaylist(req.params.id, songId, index);
     if (!updatedPlaylist) return res.status(500).json({ success: false, error: "Unable to create song in list"});
-    return res.status(200).json({ success: true, playlist: updatedPlaylist.toJSON()});
+    let returnPlaylist = await playlistInstanceToJSON(updatedPlaylist);
+    return res.status(200).json({ success: true, playlist: returnPlaylist});
 }
 
 updatePlaylistMoveSong = async (req, res) => {
@@ -262,7 +273,8 @@ updatePlaylistMoveSong = async (req, res) => {
     songsCopy.splice(to, 0, temp);
     let updatedPlaylist = await DB.updatePlaylist(req.params.id, null, songsCopy);
     if (!updatedPlaylist) return res.status(500).json({ success: false, error: "Unable to move song in list"});
-    return res.status(200).json({ success: true, playlist: updatedPlaylist.toJSON()});
+    let returnPlaylist = await playlistInstanceToJSON(updatedPlaylist);
+    return res.status(200).json({ success: true, playlist: returnPlaylist});
 }
 
 updatePlaylistRemoveSong = async (req, res) => {
@@ -276,7 +288,8 @@ updatePlaylistRemoveSong = async (req, res) => {
     await DB.removePlaylistFromSong(songId, req.params.id);
     let updatedPlaylist = await DB.removeSongFromPlaylist(req.params.id, songId);
     if (!updatedPlaylist) return res.status(500).json({ success: false, error: "Unable to remove song from list"});
-    return res.status(200).json({ success: true, playlist: updatedPlaylist.toJSON()});
+    let returnPlaylist = await playlistInstanceToJSON(updatedPlaylist);
+    return res.status(200).json({ success: true, playlist: returnPlaylist});
 }
 
 updatePlaylist = async (req, res) => {
@@ -364,7 +377,8 @@ updateSong = async (req, res) => {
     let { title, artist, year, youTubeId } = req.body;
     let updatedSong = await DB.updateSong(req.params.id, title, artist, year, youTubeId, null);
     if (!updatedSong) return res.status(500).json({ success: false, error: "Unable to update song"});
-    return res.status(200).json({ success: true, song: updatedSong.toJSON()});
+    let returnSong = songInstanceToJSON(updatedSong);
+    return res.status(200).json({ success: true, song: returnSong});
 }
 
 listenToPlaylist = async (req, res) => {
@@ -373,7 +387,7 @@ listenToPlaylist = async (req, res) => {
             errorMessage: 'UNAUTHORIZED'
         })
     }
-    let updatedPlaylist = await DB.addListenerToPlaylist(req.userId, req.params.id);
+    await DB.addListenerToPlaylist(req.userId, req.params.id);
     return res.status(200).json({ success: true });
 }
 
@@ -381,7 +395,7 @@ listenToSong = async (req, res) => {
     let song = await DB.findSong({_id: req.params.id});
     let updatedSong = await DB.updateSong(req.params.id, null, null, null, null, song.listens + 1);
     if (!updatedSong) return res.status(500).json({ success: false, error: "Could not count new listen to song"});
-    return res.status(200).json({ success: true, song: updatedSong.toJSON()});
+    return res.status(200).json({ success: true});
 }
 
 searchForPlaylists = async (req, res) => {
@@ -409,7 +423,11 @@ searchForPlaylists = async (req, res) => {
                 } },
             { $match: matchConditions }
         ]);
-        return res.status(200).json({ success: true, playlists: lists });
+        listsJSON = [];
+        for (let l of lists) {
+            listsJSON.push(await playlistInstanceToJSON(l));
+        }
+        return res.status(200).json({ success: true, playlists: listsJSON });
     } catch (err) {
         return res.status(500).json({ success: false, error: err });
     }
@@ -424,6 +442,7 @@ searchForSongs = async (req, res) => {
     if (isDefined(year)) conditions.year = parseInt(year);
     let matches = await DB.findSongs(conditions);
     if (!matches) return res.status(500).json({ success: false, error: "Error searching for songs" });
+    matches = matches.map(s => songInstanceToJSON(s));
     return res.status(200).json({ success: true, songs: matches });
 };
 
