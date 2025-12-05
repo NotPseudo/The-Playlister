@@ -8,17 +8,14 @@ function authManager() {
         try {
             const token = req.cookies.token;
             if (!token) {
-                return res.status(401).json({
-                    loggedIn: false,
-                    user: null,
-                    errorMessage: "Unauthorized"
-                })
+                req.loggedIn = false;
+                req.userId = null;
+            } else {
+                const verified = jwt.verify(token, process.env.JWT_SECRET)
+                console.log("verified.userId: " + verified.userId);
+                req.loggedIn = true;
+                req.userId = verified.userId;
             }
-
-            const verified = jwt.verify(token, process.env.JWT_SECRET)
-            console.log("verified.userId: " + verified.userId);
-            req.userId = verified.userId;
-
             next();
         } catch (err) {
             console.error(err);
