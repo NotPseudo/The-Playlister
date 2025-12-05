@@ -1,4 +1,4 @@
-const auth = require('../auth')
+const auth = require('../auth/Auth.js')
 
 const { DB, Playlist } = require('../db/DatabaseManager')
 
@@ -418,9 +418,15 @@ searchForSongs = async (req, res) => {
 
 module.exports = {
     createPlaylist,
+    createSong,
     deletePlaylist,
+    deleteSong,
     getPlaylistById,
-    getPlaylistPairs,
-    getPlaylists,
-    updatePlaylist
+    getSongById,
+    updatePlaylist,
+    updateSong,
+    listenToPlaylist,
+    listenToSong,
+    searchForPlaylists,
+    searchForSongs
 }
