@@ -153,90 +153,6 @@ getSongById = async (req, res) => {
     return res.status(200).json({ success: true, song: returnSong })
 }
 
-// getPlaylistPairs = async (req, res) => {
-//     if(auth.verifyUser(req) === null){
-//         return res.status(400).json({
-//             error: 'UNAUTHORIZED'
-//         })
-//     }
-//     console.log("getPlaylistPairs");
-
-//     let user = await db.findUser({ id: req.userId });
-//     if (!user) return res.status(400).json({ success: false, error: 'User not found!' });
-//     let playlists = await db.findPlaylists({ ownerEmail: user.email });
-//     if (!playlists) return res.status(400).json({ success: false, error: 'Playlists not found!' });
-//     console.log("Send the Playlist pairs");
-//     //console.log(playlists);
-//     // PUT ALL THE LISTS INTO ID, NAME PAIRS
-//     let pairs = [];
-//     for (let key in playlists) {
-//         let list = playlists[key];
-//         let pair = {
-//             _id: (isDefined(list._id) ? list._id : list.id),
-//             name: list.name
-//         };
-//         pairs.push(pair);
-//     }
-//     return res.status(200).json({ success: true, idNamePairs: pairs })
-
-//     // await User.findOne({ _id: req.userId }, (err, user) => {
-//     //     console.log("find user with id " + req.userId);
-//     //     async function asyncFindList(email) {
-//     //         console.log("find all Playlists owned by " + email);
-//     //         await Playlist.find({ ownerEmail: email }, (err, playlists) => {
-//     //             console.log("found Playlists: " + JSON.stringify(playlists));
-//     //             if (err) {
-//     //                 return res.status(400).json({ success: false, error: err })
-//     //             }
-//     //             if (!playlists) {
-//     //                 console.log("!playlists.length");
-//     //                 return res
-//     //                     .status(404)
-//     //                     .json({ success: false, error: 'Playlists not found' })
-//     //             }
-//     //             else {
-//     //                 console.log("Send the Playlist pairs");
-//     //                 // PUT ALL THE LISTS INTO ID, NAME PAIRS
-//     //                 let pairs = [];
-//     //                 for (let key in playlists) {
-//     //                     let list = playlists[key];
-//     //                     let pair = {
-//     //                         _id: list._id,
-//     //                         name: list.name
-//     //                     };
-//     //                     pairs.push(pair);
-//     //                 }
-//     //                 return res.status(200).json({ success: true, idNamePairs: pairs })
-//     //             }
-//     //         }).catch(err => console.log(err))
-//     //     }
-//     //     asyncFindList(user.email);
-//     // }).catch(err => console.log(err))
-// }
-
-// getPlaylists = async (req, res) => {
-//     if(auth.verifyUser(req) === null){
-//         return res.status(400).json({
-//             error: 'UNAUTHORIZED'
-//         })
-//     }
-//     let playlists = await db.findPlaylists({});
-//     if (!playlists || !playlists.length) return res.status(404).json({ success: false, error: `Playlists not found` });
-//     playlists = playlists.map(p => p.toJSON());
-//     return res.status(200).json({ success: true, data: playlists })
-//     // await Playlist.find({}, (err, playlists) => {
-//     //     if (err) {
-//     //         return res.status(400).json({ success: false, error: err })
-//     //     }
-//     //     if (!playlists.length) {
-//     //         return res
-//     //             .status(404)
-//     //             .json({ success: false, error: `Playlists not found` })
-//     //     }
-//     //     return res.status(200).json({ success: true, data: playlists })
-//     // }).catch(err => console.log(err))
-// }
-
 updatePlaylistChangeName = async (req, res) => {
     if (!isDefined(req.body.name)) return res.status(400).json({ success: false, error: "New list name not provided"});
     let updatedPlaylist = await DB.updatePlaylist(req.params.id, req.body.name, null)
@@ -313,16 +229,16 @@ updatePlaylist = async (req, res) => {
     if (!await doesUserIdOwnPlaylistId(req.userId, req.params.id)) return res.status(400).json({success: false, error: "User does not own the playlist"});
     
     switch (req.body.updateType) {
-        case "changeName":
+        case "CHANGE_NAME":
             return await updatePlaylistChangeName(req, res);
             break;
-        case "createSong":
+        case "CREATE_SONG":
             return await updatePlaylistCreateSong(req, res);
             break;
-        case "moveSong":
+        case "MOVE_SONG":
             return await updatePlaylistMoveSong(req, res);
             break;
-        case "removeSong":
+        case "REMOVE_SONG":
             return await updatePlaylistRemoveSong(req, res);
             break;
         default:
