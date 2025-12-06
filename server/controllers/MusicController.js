@@ -268,9 +268,8 @@ updateSong = async (req, res) => {
 
 listenToPlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
-        return res.status(400).json({
-            success: false,
-            error: 'UNAUTHORIZED'
+        return res.status(200).json({
+            success: true
         })
     }
     await DB.addListenerToPlaylist(req.userId, req.params.id);
