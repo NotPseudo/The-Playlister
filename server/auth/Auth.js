@@ -22,7 +22,7 @@ function authManager() {
             return res.status(401).json({
                 loggedIn: false,
                 user: null,
-                errorMessage: "Unauthorized"
+                error: "Unauthorized"
             });
         }
     }
