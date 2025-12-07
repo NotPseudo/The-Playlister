@@ -39,16 +39,10 @@ const fetchResToJSON = async (res) => {
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
 
-//export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const getLoggedIn = async () => await fetchResToJSON(await fetch(baseURL + `/loggedIn/`, {
     credentials: 'include'
 }));
-// export const loginUser = (email, password) => {
-//     return api.post(`/login/`, {
-//         email : email,
-//         password : password
-//     })
-// }
+
 export const loginUser = async (email, password) => { 
     let res = await fetch(baseURL + `/login`, {
         method: 'POST',
@@ -61,28 +55,20 @@ export const loginUser = async (email, password) => {
     }
     return { data: { success: false }, status: res.status }
 }
-//export const logoutUser = () => api.get(`/logout/`)
+
 export const logoutUser = async () => await fetchResToJSON(await fetch(baseURL + `/logout`, {
     credentials: 'include'
 }));
-// export const registerUser = (firstName, lastName, email, password, passwordVerify) => {
-//     return api.post(`/register/`, {
-//         firstName : firstName,
-//         lastName : lastName,
-//         email : email,
-//         password : password,
-//         passwordVerify : passwordVerify
-//     })
-// }
-export const registerUser = async (firstName, lastName, email, password, passwordVerify) => {
+
+export const registerUser = async (username, email, avatar, password, passwordVerify) => {
     let res = await fetch(baseURL + `/register`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            firstName : firstName,
-            lastName : lastName,
+            username: username,
             email : email,
+            avatar: avatar,
             password : password,
             passwordVerify : passwordVerify
         })
@@ -92,6 +78,26 @@ export const registerUser = async (firstName, lastName, email, password, passwor
     }
     return { data: { success: false }, status: res.status }
 }
+
+export const editAccount = async (username, avatar, password, passwordVerify) => {
+    let res = await fetch(baseURL + `/edit`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: username,
+            avatar : avatar,
+            password : password,
+            passwordVerify : passwordVerify
+        })
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+
 const apis = {
     getLoggedIn,
     registerUser,
