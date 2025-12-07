@@ -10,12 +10,8 @@
     @author McKilla Gorilla
 */
 
-// import axios from 'axios'
-// axios.defaults.withCredentials = true;
+
 const baseURL = 'http://localhost:4000/store';
-// const api = axios.create({
-//     baseURL: 'http://localhost:4000/store',
-// })
 
 const fetchResToJSON = async (res) => {
     let data = null;
@@ -38,15 +34,8 @@ const fetchResToJSON = async (res) => {
 // WORK, AND SOME REQUIRE DATA, WHICH WE WE WILL FORMAT HERE, FOR WHEN
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
-// export const createPlaylist = (newListName, newSongs, userEmail) => {
-//     return api.post(`/playlist/`, {
-//         // SPECIFY THE PAYLOAD
-//         name: newListName,
-//         songs: newSongs,
-//         ownerEmail: userEmail
-//     })
-// }
-export const createPlaylist = async (newListName, newSongs, userEmail) => {
+
+export const createPlaylist = async (newListName, newSongs, userId) => {
     let res = await fetch(baseURL + `/playlist`, {
         method: 'POST',
         credentials: 'include',
@@ -54,7 +43,8 @@ export const createPlaylist = async (newListName, newSongs, userEmail) => {
         body: JSON.stringify({
             name: newListName,
             songs: newSongs,
-            ownerEmail: userEmail
+            ownerId: userId,
+            listeners: 0
         })
     })
     if (res.ok) {
@@ -62,33 +52,190 @@ export const createPlaylist = async (newListName, newSongs, userEmail) => {
     }
     return { data: { success: false }, status: res.status }
 }
-//export const deletePlaylistById = (id) => api.delete(`/playlist/${id}`)
+
+export const createSong = async (title, artist, year, youTubeId, ownerId) => {
+    let res = await fetch(baseURL + `/song`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            title :title, 
+            artist: artist,
+            year: year,
+            youTubeId: youTubeId,
+            ownerId: ownerId,
+            playlists: [],
+            listens: 0
+        })
+    })
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
 export const deletePlaylistById = async (id) => await fetchResToJSON(await fetch(baseURL + `/playlist/${id}`, {
     method: "DELETE",
     credentials: 'include'
 }))
-//export const getPlaylistById = (id) => api.get(`/playlist/${id}`)
+
+export const deleteSongById = async (id) => await fetchResToJSON(await fetch(baseURL + `/song/${id}`, {
+    method: "DELETE",
+    credentials: 'include'
+}))
+
 export const getPlaylistById = async (id) => await fetchResToJSON(await fetch(baseURL + `/playlist/${id}`, {
     credentials: 'include'
 }))
-//export const getPlaylistPairs = () => api.get(`/playlistpairs/`)
-export const getPlaylistPairs = async () => await fetchResToJSON(await fetch(baseURL + `/playlistpairs/`, {
+
+export const getSongById = async (id) => await fetchResToJSON(await fetch(baseURL + `/song/${id}`, {
     credentials: 'include'
 }))
-// export const updatePlaylistById = (id, playlist) => {
-//     return api.put(`/playlist/${id}`, {
-//         // SPECIFY THE PAYLOAD
-//         playlist : playlist
-//     })
-// }
-export const updatePlaylistById = async(id, playlist) => {
-    let res = await fetch(baseURL + `/playlist/${id}`, {
-        method: 'PUT',
+
+export const updatePlaylistName = async(playlistId, newName) => {
+    let res = await fetch(baseURL + `/playlist/${playlistId}`, {
+        method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            playlist : playlist
+            updateType: "CHANGE_NAME",
+            name: newName
         })  
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const createSongInPlaylist = async(playlistId, songId, index) => {
+    let res = await fetch(baseURL + `/playlist/${playlistId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            updateType: "CREATE_SONG",
+            songId : songId,
+            index: index
+        })  
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const moveSongInPlaylist = async(playlistId, from, to) => {
+    let res = await fetch(baseURL + `/playlist/${playlistId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            updateType: "MOVE_SONG",
+            fromIndex : from,
+            toIndex: to
+        })  
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const removeSongFromPlaylist = async(playlistId, songId) => {
+    let res = await fetch(baseURL + `/playlist/${playlistId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            updateType: "CHANGE_NAME",
+            songId : songId
+        })  
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const updateSongById = async(id, newTitle, newArtist, newYear, newYouTubeId) => {
+    let res = await fetch(baseURL + `/song/${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            title : newTitle,
+            artist, newArtist,
+            year: newYear,
+            youTubeId: newYouTubeId
+        })  
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const listenToPlaylist = async(playlistId) => {
+    let res = await fetch(baseURL + `/playlist/${playlistId}/listen`, {
+        method: 'PATCH',
+        credentials: 'include'
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const listenToSong = async(songId) => {
+    let res = await fetch(baseURL + `/song/${songId}/listen`, {
+        method: 'PATCH',
+        credentials: 'include'
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const searchForPlaylists = async(listName, ownerName, searchTitle, searchArtist, searchYear) => {
+    const params = new URLSearchParams();
+    params.append("name", listName);
+    params.append("username", ownerName);
+    params.append("songTitle", searchTitle);
+    params.append("songArtist", searchArtist);
+    params.append("songYear", searchYear);
+
+    let res = await fetch(baseURL + `/playlist?${params.toString()}`, {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const searchOwnedPlaylists = async() => {
+    let res = await fetch(baseURL + `/playlist`, {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if (res.ok) {
+        return await fetchResToJSON(res);
+    }
+    return { data: { success: false }, status: res.status }
+}
+
+export const searchForSongs = async(songTitle, songArtist, songYear) => {
+    const params = new URLSearchParams();
+    params.append("title", songTitle);
+    params.append("artist", songArtist);
+    params.append("year", songYear);
+
+    let res = await fetch(baseURL + `/song?${params.toString()}`, {
+        method: 'GET',
+        credentials: 'include'
     });
     if (res.ok) {
         return await fetchResToJSON(res);
@@ -98,10 +245,21 @@ export const updatePlaylistById = async(id, playlist) => {
 
 const apis = {
     createPlaylist,
+    createSong,
     deletePlaylistById,
+    deleteSongById,
     getPlaylistById,
-    getPlaylistPairs,
-    updatePlaylistById
+    getSongById,
+    updatePlaylistName,
+    createSongInPlaylist,
+    moveSongInPlaylist,
+    removeSongFromPlaylist,
+    updateSongById,
+    listenToPlaylist,
+    listenToSong,
+    searchForPlaylists,
+    searchOwnedPlaylists,
+    searchForSongs
 }
 
 export default apis
