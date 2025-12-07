@@ -120,12 +120,22 @@ songInstanceToJSON = (instance) => {
 }
 
 playlistInstanceToJSON = async (instance) => {
-    let playlist = await instance.populate("songs");
-    let songs = playlist.songs.map(s => songInstanceToJSON(s));
-    let playlistJSON = playlist.toJSON();
-    playlistJSON.songs = songs;
-    playlistJSON.uniqueListeners = playlist.uniqueListeners.length;
-    return playlistJSON;
+    let instAsObj = instance.toJSON ? instance.toJSON() : {...instance};
+    let songsJSON;
+    if (instAsObj.songsData) {
+        songsJSON = instAsObj.songs.map(s => songInstanceToJSON(s));
+    } else {
+        let populated = await instance.populate("songs");
+        songsJSON = populated.songs.map(s => songInstanceToJSON(s));
+    }
+    
+    return {
+        _id: instAsObj._id,
+        name: instAsObj.name,
+        owner: instAsObj.owner,
+        songs: songsJSON,
+        uniqueListeners: instAsObj.uniqueListeners.length
+    }
 }
 
 getPlaylistById = async (req, res) => {
@@ -284,15 +294,32 @@ listenToSong = async (req, res) => {
 }
 
 searchForPlaylists = async (req, res) => {
+    let userId = auth.verifyUser(req);
+    let anyFieldDefined = false;
     let { name, username, songTitle, songArtist, songYear } = req.query;
     let matchConditions = {};
-    if (isDefined(name)) matchConditions.name = { $regex: name, $options: "i" };
-    if (isDefined(username)) matchConditions["ownerData.username"] = { $regex: username, $options: "i" };
-    if (isDefined(songTitle)) matchConditions["songsData.title"] = { $regex: songTitle, $options: "i" };
-    if (isDefined(songArtist)) matchConditions["songsData.artist"] = { $regex: songArtist, $options: "i" };
-    if (isDefined(songYear)) matchConditions["songsData.year"] = parseInt(songYear);
+    if (isDefined(name)) {
+        matchConditions.name = { $regex: name, $options: "i" };
+        anyFieldDefined = true;
+    }
+    if (isDefined(username)) {
+        matchConditions["ownerData.username"] = { $regex: username, $options: "i" };
+        anyFieldDefined = true;
+    }
+    if (isDefined(songTitle)) {
+        matchConditions["songsData.title"] = { $regex: songTitle, $options: "i" };
+        anyFieldDefined = true;
+    }
+    if (isDefined(songArtist)) {
+        matchConditions["songsData.artist"] = { $regex: songArtist, $options: "i" };
+        anyFieldDefined = true;
+    }
+    if (isDefined(songYear)) {
+        matchConditions["songsData.year"] = parseInt(songYear);
+        anyFieldDefined = true;
+    }
     try {
-        const lists = await Playlist.aggregate([
+        const lists = anyFieldDefined ? await Playlist.aggregate([
             { $lookup: {
                     from: "users",
                     localField: "owner",
@@ -307,7 +334,7 @@ searchForPlaylists = async (req, res) => {
                     as: "songsData"
                 } },
             { $match: matchConditions }
-        ]);
+        ]) : await DB.findPlaylists({owner: userId});
         listsJSON = [];
         for (let l of lists) {
             listsJSON.push(await playlistInstanceToJSON(l));
