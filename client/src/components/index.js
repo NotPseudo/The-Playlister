@@ -15,7 +15,6 @@ import PlaylistCard from './PlaylistCard'
 import PlaylistResults from './PlaylistResults'
 import PlaylistSearchTool from './PlaylistSearchTool'
 import PlaylistsScreen from './PlaylistsScreen'
-import RegisterScreen from './RegisterScreen'
 import SongCard from './SongCard'
 import SongResults from './SongResults'
 import SongSearchTool from './SongSearchTool'
@@ -43,7 +42,6 @@ export {
     PlaylistResults,
     PlaylistSearchTool,
     PlaylistsScreen,
-    RegisterScreen,
     SongCard,
     SongResults,
     SongSearchTool,
