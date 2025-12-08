@@ -110,7 +110,7 @@ const PlaylistResults = () => {
                 ))}
             </Box>
 
-            <Box sx={{ mt: 2 }}>
+            {auth.loggedIn && <Box sx={{ mt: 2 }}>
                 <Button
                     variant="contained"
                     onClick={handleNewPlaylist}
@@ -125,7 +125,7 @@ const PlaylistResults = () => {
                 >
                     New Playlist
                 </Button>
-            </Box>
+            </Box>}
         </Box>
     );
 };
