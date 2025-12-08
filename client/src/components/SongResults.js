@@ -118,7 +118,7 @@ const SongResults = () => {
                 ))}
             </Box>
 
-            <Box sx={{ mt: 3 }}>
+            {auth.loggedIn && <Box sx={{ mt: 3 }}>
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
@@ -134,6 +134,7 @@ const SongResults = () => {
                     New Song
                 </Button>
             </Box>
+            }
         </Box>
     );
 };
