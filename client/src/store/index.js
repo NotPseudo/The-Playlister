@@ -37,7 +37,7 @@ export const GlobalStoreActionType = {
     CLOSE_EDIT_LIST: "CLOSE_EDIT_LIST",
     ADD_SONG_TO_LIST: "ADD_SONG_TO_LIST",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
-    DELeTE_LIST: "DELETE_LIST",
+    DELETE_LIST: "DELETE_LIST",
 
     // --- SONGS --- 
     SEARCH_AND_LOAD_SONGS: "SEARCH_AND_LOAD_SONGS",
@@ -47,9 +47,12 @@ export const GlobalStoreActionType = {
     COMPLETE_CREATE_NEW_SONG: "COMPLETE_CREATE_NEW_SONG",
 
     SET_EDIT_SONG: "SET_EDIT_SONG",
+    COMPLETE_EDIT_SONG: "COMPLETE_EDIT_SONG",
     CLOSE_EDIT_SONG: "CLOSE_EDIT_SONG",
 
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
+
+    SET_CATALOG_PLAYING_SONG: "SET_CATALOG_PLAYING_SONG",
 
     // --- MODALS ---
 
@@ -107,17 +110,19 @@ function GlobalStoreContextProvider(props) {
 
         editList: null,
 
-        deleteListId: null,
+        deleteList: null,
 
         songResults: [],
         songSortType: SongSortType.LISTENS_HILO,
 
         editSong: null,
 
-        deleteSongId: null,
+        deleteSong: null,
 
         playingList: null,
         playingSongIndex: null,
+
+        catalogPlayingSong: null,
 
         currentModal: null
     });
@@ -199,13 +204,12 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.ADD_SONG_TO_LIST: {
                 return setStore({
-                    playlistResults: payload.playlists,
-                    recentEditLists: payload.recentEditLists
+                    songResults: payload.songs
                 });
             }
             case GlobalStoreActionType.MARK_LIST_FOR_DELETION: {
                 return setStore({
-                    deleteListId: payload.listId,
+                    deleteList: payload.list,
                     currentModal: CurrentModal.DELETE_LIST
                 });
             }
@@ -242,6 +246,13 @@ function GlobalStoreContextProvider(props) {
                     currentModal: CurrentModal.EDIT_SONG
                 });
             }
+            case GlobalStoreActionType.COMPLETE_EDIT_SONG: {
+                return setStore({
+                    editSong: null,
+                    currentModal: CurrentModal.NONE,
+                    songResults: payload.songs
+                });
+            }
             case GlobalStoreActionType.CLOSE_EDIT_SONG: {
                 return setStore({
                     editSong: null,
@@ -250,8 +261,13 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
                 return setStore({
-                    deleteSongId: payload.songId,
+                    deleteSongId: payload.song,
                     currentModal: CurrentModal.DELETE_SONG
+                });
+            }
+            case GlobalStoreActionType.SET_CATALOG_PLAYING_SONG: {
+                return setStore({
+                    catalogPlayingSong: payload.song
                 });
             }
             case GlobalStoreActionType.SET_PLAYING_LIST: {
@@ -287,7 +303,7 @@ function GlobalStoreContextProvider(props) {
         async function asyncSearchLists(name, username, title, artist, year) {
             const response = await storeRequestSender.searchForPlaylists(name, username, title, artist, year);
             if (response.data.success) {
-                let sorted = sortListResults(store.listSortType, response.data.playlists);
+                let sorted = store.sortListResults(store.listSortType, response.data.playlists);
                 storeReducer({
                     type: GlobalStoreActionType.SEARCH_AND_LOAD_LISTS,
                     payload: {playlists: sorted}
@@ -406,10 +422,8 @@ function GlobalStoreContextProvider(props) {
 
     store.addDuplicateTransaction = (song, dupeIndex) => {
         if (!auth.loggedIn) {
-            storeReducer({
-                type: GlobalStoreActionType.HIDE_MODALS,
-                payload: {}
-            })
+            store.hideModals();
+            return;
         }
         async function asyncDuplicate(song, dupeIndex) {
             const response = await storeRequestSender.createSong(song.title, song.artist, song.year, song.youTubeId, auth.user._id);
@@ -439,7 +453,7 @@ function GlobalStoreContextProvider(props) {
         asyncMoveSong(from, to);
     }
 
-    store.addRemoveSongFromListTransaction = (index, song) => {
+    store.addRemoveSongFromListTransaction = (song, index) => {
         let transaction = new RemoveSong_Transaction(store, index, song);
         tps.processTransaction(transaction);
     }
@@ -484,6 +498,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.closeEditList = () => {
+        tps.clearAllTransactions();
         async function getRecentEdit() {
             const response = await storeRequestSender.searchOwnedPlaylists();
             if (response.data.success) {
@@ -497,15 +512,34 @@ function GlobalStoreContextProvider(props) {
         getRecentEdit();
     }
 
-    store.markListForDeletion = (playlistid) => {
+    store.addSongToPlaylist = (playlist, songId, index) => {
+        async function asyncAddSongToList(playlistId, songId, index) {
+            const response = await storeRequestSender.createSongInPlaylist(playlistId, songId, index);
+            if (response.data.success) {
+                const songResponse = await storeRequestSender.getSongById(songId);
+                let updatedSong = store.songResults.find(s => s._id === songId);
+                if (songResponse.data.success) updatedSong = songResponse.data.song;
+                let newSongResults = [...store.songResults];
+                newSongResults = newSongResults.map(s => s._id === songId ? updatedSong : s);
+                storeReducer({
+                    type: GlobalStoreActionType.ADD_SONG_TO_LIST,
+                    payload: {songs: newSongResults}
+                })
+            }
+        }
+        asyncAddSongToList(playlist._id, songId, index);
+    }
+
+    store.markListForDeletion = (playlist) => {
         storeReducer({
             type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
-            payload: {listId: playlistid}
+            payload: {list: playlist}
         })
     }
 
     store.deleteMarkedList = () => {
-        async function asyncDeleteList(id) {
+        async function asyncDeleteList(playlist) {
+            let id = playlist._id;
             const response = await storeRequestSender.deletePlaylistById(id);
             if (response.data.success) {
                 let newPlaylistResults = store.playlistResults.filter(p => p._id !== id);
@@ -516,7 +550,7 @@ function GlobalStoreContextProvider(props) {
                 })
             }
         }
-        asyncDeleteList(store.deleteListId);
+        asyncDeleteList(store.deleteList);
     }
 
     store.searchAndLoadSongs = (title, artist, year) => {
@@ -587,10 +621,8 @@ function GlobalStoreContextProvider(props) {
 
     store.sendCreateNewSong = (title, artist, year, youTubeId) => {
         if (!auth.loggedIn) {
-            storeReducer({
-                type: GlobalStoreActionType.HIDE_MODALS,
-                payload: {}
-            })
+            store.hideModals();
+            return;
         }
         async function asyncSendCreateSong(newTitle, newArtist, newYear, newYouTubeId) {
             const response = await storeRequestSender.createSong(newTitle, newArtist, newYear, newYouTubeId, auth.user._id);
@@ -610,6 +642,23 @@ function GlobalStoreContextProvider(props) {
             payload: {song: song}
         })
     }
+
+    store.editSong = (songId, title, artist, year, youTubeId) => {
+        async function asyncEditSong(songId, title, artist, year, youTubeId) {
+            const response = await storeRequestSender.updateSongById(songId, title, artist, year, youTubeId);
+            let updatedSong = store.songResults.find(s => s._id === songId);
+            if (response.data.success) {
+                updatedSong = response.data.song;
+                let newSongResults = [...store.songResults];
+                newSongResults = newSongResults.map(s => s._id === songId ? updatedSong : s);
+                storeReducer({
+                    type: GlobalStoreActionType.COMPLETE_EDIT_SONG,
+                    payload: {songs: newSongResults}
+                })
+            }
+        }
+        
+    }
     
     store.closeEditSong = () => {
         storeReducer({
@@ -618,15 +667,15 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
-    store.markSongForDeletion = (songId) => {
+    store.markSongForDeletion = (song) => {
         storeReducer({
             type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
-            payload: {songId: songId}
+            payload: {song: song}
         })
     }
 
     store.deleteMarkedSong = () => {
-        let songId = store.deleteSongId;
+        let songId = store.deleteSong._id;
         async function asyncDeleteSong(id) {
             const response = await storeRequestSender.deleteSongById(id);
             if (response.data.success) {
@@ -640,6 +689,13 @@ function GlobalStoreContextProvider(props) {
         asyncDeleteSong(songId);
     }
 
+    store.setCatalogPlayingSong = (song) => {
+        storeReducer({
+            type: GlobalStoreActionType.SET_CATALOG_PLAYING_SONG,
+            payload: {song: song}
+        })
+    }
+
     store.openListInPlayer = (playlist) => {
         storeReducer({
             type: GlobalStoreActionType.SET_PLAYING_LIST,
@@ -649,6 +705,7 @@ function GlobalStoreContextProvider(props) {
 
     store.hideModals = () => {
         auth.error = null;
+        tps.clearAllTransactions();
         storeReducer({
             type: GlobalStoreActionType.HIDE_MODALS,
             payload: {}
@@ -670,7 +727,7 @@ function GlobalStoreContextProvider(props) {
     store.isPlayerModalOpen = () => {
         return store.currentModal === CurrentModal.PLAYER;
     }
-    store.isModalOpen() = function() {
+    store.isModalOpen = () => {
         return store.currentModal === CurrentModal.NONE;
     }
 
