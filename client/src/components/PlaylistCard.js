@@ -39,7 +39,7 @@ const PlaylistCard = ({ playlist }) => {
     };
 
     const handleDelete = () => {
-        store.markListForDeletion(playlist.id);
+        store.markListForDeletion(playlist);
     };
 
     return (

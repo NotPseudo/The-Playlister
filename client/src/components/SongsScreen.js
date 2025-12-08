@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Box } from "@mui/material";
 
 import SongSearchTool from "./SongSearchTool";
 import SongResults from "./SongResults";
+import { GlobalStoreContextProvider } from "../store";
 
 const SongsScreen = () => {
+
+    const { store } = useContext(GlobalStoreContextProvider)
+
+    useEffect(() => {
+        store.findAndLoadOwnedLists();
+    }, []);
+
     return (
         <Box
             sx={{

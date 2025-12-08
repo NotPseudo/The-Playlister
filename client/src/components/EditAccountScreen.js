@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
     Avatar,
     Box,
@@ -17,7 +17,7 @@ import { GlobalStoreContext } from '../store/';
 
 const EditAccountScreen = () => {
     const navigate = useNavigate();
-    const fileInputRef = userRef(null);
+    const fileInputRef = useRef(null);
     const { auth } = useContext(AuthContext);
 
     const [username, setUsername] = useState(auth.user?.username || "");
