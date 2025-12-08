@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { useNagivate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import authRequestSender from './requests'
 
 const AuthContext = createContext();
@@ -20,7 +20,7 @@ function AuthContextProvider(props) {
         loggedIn: false,
         error: null
     });
-    const navigate = useNagivate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         auth.getLoggedIn();

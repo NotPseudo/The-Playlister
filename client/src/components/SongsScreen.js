@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 
 import SongSearchTool from "./SongSearchTool";
 import SongResults from "./SongResults";
-import GlobalStoreContextProvider  from "../store";
+import { GlobalStoreContextProvider }  from "../store";
 
 const SongsScreen = () => {
 
