@@ -7,6 +7,7 @@ import {
     Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 import AuthContext from '../auth/';
 import { GlobalStoreContext, ListSortType } from '../store/';
@@ -58,23 +59,23 @@ const PlaylistResults = () => {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    mb: 3
+                    mb: 2
                 }}
             >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Typography variant="h6">Sort:</Typography>
+                    <Typography sx={{ fontSize: "1.3rem", fontWeight: 600 }} variant="h6">Sort:</Typography>
 
-                    <Typography
-                        variant="h6"
+                    <Button
                         sx={{
+                            textTransform: "none",
+                            fontSize: "1.2rem",
                             color: "#3f6ee9",
-                            cursor: "pointer",
-                            textDecoration: "underline"
                         }}
+                        endIcon={<KeyboardArrowDownIcon />}
                         onClick={handleSortTypeListOpen}
                     >
                         {sortTypeDisplay}
-                    </Typography>
+                    </Button>
                 </Box>
 
                 <Typography variant="h6">

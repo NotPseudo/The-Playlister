@@ -18,33 +18,31 @@ const SongsScreen = () => {
             sx={{
                 display: "flex",
                 flexDirection: "row",
-                width: "100%",
                 height: "calc(100vh - 64px)", 
-                p: 2,
-                boxSizing: "border-box",
+                width: "100%",
                 backgroundColor: "#faf7dc",
             }}
         >
             <Box
                 sx={{
-                    width: "40%",
-                    display: "flex",
-                    flexDirection: "column",
-                    pr: 2,
-                    gap: 3,
+                    width: "40%",        
+                    minWidth: 320,       
+                    borderRight: "2px solid rgba(0,0,0,0.15)",
+                    p: 3,
+                    boxSizing: "border-box",
+                    backgroundColor: "#faf7df", 
                 }}
             >
                 <SongSearchTool />
 
                 <Box
                     sx={{
-                        width: "100%",
-                        minHeight: "250px",
-                        backgroundColor: "#ffffff",
-                        borderRadius: "12px",
-                        p: 2,
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        width: "40%",        
+                        minWidth: 320,       
+                        borderRight: "2px solid rgba(0,0,0,0.15)",
+                        p: 3,
                         boxSizing: "border-box",
+                        backgroundColor: "#faf7df", 
                     }}
                 >
                     {/* YouTube embed here */}
@@ -53,10 +51,11 @@ const SongsScreen = () => {
 
             <Box
                 sx={{
-                    width: "60%",
-                    pl: 2,
-                    display: "flex",
-                    flexDirection: "column",
+                    flexGrow: 1,
+                    p: 3,
+                    boxSizing: "border-box",
+                    backgroundColor: "#faf7df",
+                    overflowY: "auto",
                 }}
             >
                 <SongResults />

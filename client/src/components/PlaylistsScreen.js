@@ -23,7 +23,7 @@ const PlaylistsScreen = () => {
         >
             <Box
                 sx={{
-                    width: "35%",        
+                    width: "40%",        
                     minWidth: 320,       
                     borderRight: "2px solid rgba(0,0,0,0.15)",
                     p: 3,
