@@ -127,10 +127,7 @@ function AuthContextProvider(props) {
                         error: null
                     }
                 })
-                navigate(-1);
-                console.log("NOW WE GO BACK");
-                // auth.loginUser(email, password);
-                // console.log("LOGGED IN");
+                return true;
             }
         } catch(error){
             authReducer({
@@ -141,6 +138,7 @@ function AuthContextProvider(props) {
                     error: error.response.data.error
                 }
             })
+            return false;
         }
     }
 
@@ -156,7 +154,7 @@ function AuthContextProvider(props) {
                         error: null
                     }
                 })
-                navigate("/");
+                return true;
             }
         } catch(error){
             authReducer({
@@ -167,6 +165,7 @@ function AuthContextProvider(props) {
                     error: error.response.data.error
                 }
             })
+            return false;
         }
     }
 
