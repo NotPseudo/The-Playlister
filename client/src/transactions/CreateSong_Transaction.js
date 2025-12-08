@@ -16,7 +16,7 @@ export default class CreateSong_Transaction extends jsTPS_Transaction {
     }
 
     executeDo() {
-        this.store.recreateSongInList(this.song._id, index);
+        this.store.recreateSongInList(this.song._id, this.index);
     }
     
     executeUndo() {
