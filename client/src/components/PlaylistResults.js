@@ -5,22 +5,19 @@ import {
     Menu,
     MenuItem,
     Button,
-    IconButton
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 import { AuthContext } from '../auth/';
 import { GlobalStoreContext, ListSortType } from '../store/';
-import PlaylistCard from "./PlaylistCard"; // will be implemented next
+import PlaylistCard from "./PlaylistCard";
 
 const PlaylistResults = () => {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    // Menu anchor for sort selector
     const [anchor, setAnchor] = useState(null);
 
-    // Shown text for current sort option
     const [sortTypeDisplay, setSortTypeDisplay] = useState("Listeners (Hi-Lo)");
 
     const handleSortTypeListOpen = (event) => {
