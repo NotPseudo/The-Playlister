@@ -113,28 +113,37 @@ deleteSong = async (req, res) => {
     return res.status(200).json({success: true});
 }
 
-songInstanceToJSON = (instance) => {
+songInstanceToJSON = async (instance) => {
     let songJSON = instance.toJSON();
+    let user = await DB.findUser({_id: instance.owner});
+    songJSON.ownerName = user.username;
     songJSON.playlists = instance.playlists.length;
     return songJSON;
 }
 
 playlistInstanceToJSON = async (instance) => {
     let instAsObj = instance.toJSON ? instance.toJSON() : {...instance};
-    let songsJSON;
+    let songsJSON = [];
     if (instAsObj.songsData) {
-        songsJSON = instAsObj.songs.map(s => songInstanceToJSON(s));
+        for (let s of instAsObj.songs) {
+            songsJSON.push(await songInstanceToJSON(s));
+        }
     } else {
         let populated = await instance.populate("songs");
-        songsJSON = populated.songs.map(s => songInstanceToJSON(s));
+        for (let s of populated.songs) {
+            songsJSON.push(await songInstanceToJSON(s));
+        }
     }
-    
+    let user = await DB.findUser({_id: instAsObj.owner});
     return {
         _id: instAsObj._id,
         name: instAsObj.name,
         owner: instAsObj.owner,
+        ownerName: user.username,
         songs: songsJSON,
-        uniqueListeners: instAsObj.uniqueListeners.length
+        uniqueListeners: instAsObj.uniqueListeners.length,
+        createdAt: instAsObj.createdAt,
+        updatedAt: instAsObj.updatedAt
     }
 }
 
@@ -159,7 +168,7 @@ getSongById = async (req, res) => {
     if (!song) return res.status(400).json({ success: false, error: 'Song not found!' });
     console.log("Found song: " + JSON.stringify(song));
 
-    let returnSong = songInstanceToJSON(song);
+    let returnSong = await songInstanceToJSON(song);
     return res.status(200).json({ success: true, song: returnSong })
 }
 
@@ -272,7 +281,7 @@ updateSong = async (req, res) => {
     let { title, artist, year, youTubeId } = req.body;
     let updatedSong = await DB.updateSong(req.params.id, title, artist, year, youTubeId, null);
     if (!updatedSong) return res.status(500).json({ success: false, error: "Unable to update song"});
-    let returnSong = songInstanceToJSON(updatedSong);
+    let returnSong = await songInstanceToJSON(updatedSong);
     return res.status(200).json({ success: true, song: returnSong});
 }
 
@@ -354,8 +363,11 @@ searchForSongs = async (req, res) => {
     if (isDefined(year)) conditions.year = parseInt(year);
     let matches = await DB.findSongs(conditions);
     if (!matches) return res.status(500).json({ success: false, error: "Error searching for songs" });
-    matches = matches.map(s => songInstanceToJSON(s));
-    return res.status(200).json({ success: true, songs: matches });
+    let returnMatches = [];
+    for (let s of matches) {
+        returnMatches.push(await songInstanceToJSON(s));
+    }
+    return res.status(200).json({ success: true, songs: returnMatches });
 };
 
 module.exports = {
