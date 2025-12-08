@@ -8,6 +8,7 @@ userInstanceToJSON = (instance) => {
     let userJSON = instance.toJSON();
     delete userJSON.passwordHash;
     delete userJSON.playlists;
+    return userJSON;
 }
 
 getLoggedIn = async (req, res) => {
@@ -192,15 +193,16 @@ editAccount = async (req, res) => {
         })
     }
     try {
-        const { username, avatar, password, passwordVerify } = req.body;
-        console.log("Edit user: " + username + " " + password + " " + passwordVerify + " " + avatar);
-        if (password) {
+        let { username, avatar, password, passwordVerify } = req.body;
+        console.log("Edit user: " + username + " " + password + " " + passwordVerify);
+        let passwordHash = null;
+        if (password !== "") {
             if (password.length < 8) {
-            return res
-                .status(400)
-                .json({
-                    success: false, error: "Please enter a password of at least 8 characters."
-                });
+                return res
+                    .status(400)
+                    .json({
+                        success: false, error: "Please enter a password of at least 8 characters."
+                    });
             }
             console.log("password long enough");
             if (password !== passwordVerify) {
@@ -210,14 +212,19 @@ editAccount = async (req, res) => {
                         success: false, error: "Please enter the same password twice."
                     })
             }
+            const saltRounds = 10;
+            const salt = await bcrypt.genSalt(saltRounds);
+            passwordHash = await bcrypt.hash(password, salt);
+            console.log("password: " + password)
+            console.log("passwordHash: " + passwordHash);
         } 
-        console.log("password and password verify match");
+        //console.log("password and password verify match");
 
-        const saltRounds = 10;
-        const salt = await bcrypt.genSalt(saltRounds);
-        const passwordHash = await bcrypt.hash(password, salt);
-        console.log("passwordHash: " + passwordHash);
-        let updatedUser = await DB.updateUser(userId, username, avatar, passwordHash);
+        let exist = await DB.findUser({_id: userId});
+        let realUsername = exist.username == username ? null : username;
+        let realAvatar = exist.avatar == avatar ? null : avatar;
+        
+        let updatedUser = await DB.updateUser(userId, realUsername, realAvatar, passwordHash);
         if (!updatedUser) {
             return res
                 .status(500)
@@ -225,7 +232,7 @@ editAccount = async (req, res) => {
                     success: false, error: "Unable to edit account details"
                 })
         }
-        console.log("updatedUser: " + JSON.stringify(updatedUser));
+        // console.log("updatedUser: " + JSON.stringify(updatedUser));
         let savedToken = updatedUser._id;
         console.log("new user saved: " + savedToken);
 
