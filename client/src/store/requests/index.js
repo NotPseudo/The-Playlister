@@ -44,7 +44,7 @@ export const createPlaylist = async (newListName, newSongs, userId) => {
             name: newListName,
             songs: newSongs,
             ownerId: userId,
-            listeners: 0
+            listeners: []
         })
     })
     if (res.ok) {
