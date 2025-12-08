@@ -45,7 +45,7 @@ const PlaylistCard = ({ playlist }) => {
     return (
         <Box
             sx={{
-                width: "100%",
+                width: "97%",
                 backgroundColor: "#ffffff",
                 borderRadius: "14px",
                 p: 2,
