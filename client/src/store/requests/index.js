@@ -36,6 +36,13 @@ const fetchResToJSON = async (res) => {
 // CUSTOM FILTERS FOR QUERIES
 
 export const createPlaylist = async (newListName, newSongs, userId) => {
+    console.log("Sending playlist body:", {
+        name: newListName,
+        songs: newSongs,
+        ownerId: userId,
+        listeners: []
+    });
+
     let res = await fetch(baseURL + `/playlist`, {
         method: 'POST',
         credentials: 'include',
@@ -217,7 +224,7 @@ export const searchForPlaylists = async(listName, ownerName, searchTitle, search
 }
 
 export const searchOwnedPlaylists = async() => {
-    let res = await fetch(baseURL + `/playlist`, {
+    let res = await fetch(baseURL + `/playlists`, {
         method: 'GET',
         credentials: 'include'
     });
