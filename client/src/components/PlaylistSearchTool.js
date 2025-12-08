@@ -59,11 +59,16 @@ const PlaylistSearchTool = () => {
         store.findAndLoadOwnedLists();
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") handleSearch();
+    }
+
     const renderInput = (label, value, onChange, onClear) => (
         <TextField
             label={label}
             value={value}
             onChange={onChange}
+            onKeyDown={handleKeyDown}
             fullWidth
             sx={{
                 mb: 3,

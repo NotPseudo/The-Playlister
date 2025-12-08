@@ -4,6 +4,7 @@ import {
     Typography,
     TextField,
     IconButton,
+    InputAdornment,
     Button
 } from "@mui/material";
 
@@ -39,6 +40,34 @@ const SongSearchTool = () => {
     //     setYear("");
     // };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") handleSearch();
+    }
+
+    const renderInput = (label, value, onChange, onClear) => (
+        <TextField
+            label={label}
+            value={value}
+            onChange={onChange}
+            onKeyDown={handleKeyDown}
+            fullWidth
+            sx={{
+                mb: 3,
+                backgroundColor: "#e3ddea",
+                borderRadius: "6px"
+            }}
+            InputProps={{
+                endAdornment: value && (
+                    <InputAdornment position="end">
+                        <IconButton onClick={onClear}>
+                            <ClearIcon />
+                        </IconButton>
+                    </InputAdornment>
+                )
+            }}
+        />
+    );
+
     return (
         <Box sx={{ width: "100%" }}>
             <Typography
@@ -52,80 +81,9 @@ const SongSearchTool = () => {
                 Song Search
             </Typography>
 
-            <Box sx={{ position: "relative", mb: 2 }}>
-                <TextField
-                    fullWidth
-                    placeholder="by Title"
-                    size="small"
-                    value={title}
-                    onChange={handleUpdateTitle}
-                    sx={{
-                        backgroundColor: "#e8e0eb",
-                        borderRadius: "8px"
-                    }}
-                />
-                <IconButton
-                    onClick={handleClearTitle}
-                    sx={{
-                        position: "absolute",
-                        right: 5,
-                        top: "50%",
-                        transform: "translateY(-50%)"
-                    }}
-                >
-                    <ClearIcon />
-                </IconButton>
-            </Box>
-
-            <Box sx={{ position: "relative", mb: 2 }}>
-                <TextField
-                    fullWidth
-                    placeholder="by Artist"
-                    size="small"
-                    value={artist}
-                    onChange={handleUpdateArtist}
-                    sx={{
-                        backgroundColor: "#e8e0eb",
-                        borderRadius: "8px"
-                    }}
-                />
-                <IconButton
-                    onClick={handleClearArtist}
-                    sx={{
-                        position: "absolute",
-                        right: 5,
-                        top: "50%",
-                        transform: "translateY(-50%)"
-                    }}
-                >
-                    <ClearIcon />
-                </IconButton>
-            </Box>
-
-            <Box sx={{ position: "relative", mb: 3 }}>
-                <TextField
-                    fullWidth
-                    placeholder="by Year"
-                    size="small"
-                    value={year}
-                    onChange={handleUpdateYear}
-                    sx={{
-                        backgroundColor: "#e8e0eb",
-                        borderRadius: "8px"
-                    }}
-                />
-                <IconButton
-                    onClick={handleClearYear}
-                    sx={{
-                        position: "absolute",
-                        right: 5,
-                        top: "50%",
-                        transform: "translateY(-50%)"
-                    }}
-                >
-                    <ClearIcon />
-                </IconButton>
-            </Box>
+            {renderInput("by Title", title, handleUpdateTitle, handleClearTitle)}
+            {renderInput("by Artist", artist, handleUpdateArtist, handleClearArtist)}
+            {renderInput("by Year", year, handleUpdateYear, handleClearYear)}
 
             <Box
                 sx={{
