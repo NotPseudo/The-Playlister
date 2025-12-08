@@ -31,41 +31,23 @@ const PlaylistResults = () => {
         setAnchor(null);
     };
 
-    const handleListenersHiLo = () => {
-        setSortTypeDisplay("Listeners (Hi-Lo)");
-        store.setListOrder(ListSortType.LISTENERS_HILO);
+    const handleSort = (text, sortType) => {
+        setSortTypeDisplay(text);
+        store.setListSortOrder(sortType);
         setAnchor(null);
     };
 
-    const handleListenersLoHi = () => {
-        setSortTypeDisplay("Listeners (Lo-Hi)");
-        store.setListOrder(ListSortType.LISTENERS_LOHI);
-        setAnchor(null);
-    };
+    const handleListenersHiLo = () => handleSort("Listeners (Hi-Lo)", ListSortType.LISTENERS_HILO);
 
-    const handleNameAZ = () => {
-        setSortTypeDisplay("Playlist Name (A-Z)");
-        store.setListOrder(ListSortType.NAME_AZ);
-        setAnchor(null);
-    };
+    const handleListenersLoHi = () => handleSort("Listeners (Lo-Hi)", ListSortType.LISTENERS_LOHI);
 
-    const handleNameZA = () => {
-        setSortTypeDisplay("Playlist Name (Z-A)");
-        store.setListOrder(ListSortType.NAME_ZA);
-        setAnchor(null);
-    };
+    const handleNameAZ = () => handleSort("Playlist Name (A-Z)", ListSortType.NAME_AZ);
 
-    const handleOwnerNameAZ = () => {
-        setSortTypeDisplay("Owner Username (A-Z)");
-        store.setListOrder(ListSortType.USERNAME_AZ);
-        setAnchor(null);
-    };
+    const handleNameZA = () => handleSort("Playlist Name (Z-A)", ListSortType.NAME_ZA);
 
-    const handleOwnerNameZA = () => {
-        setSortTypeDisplay("Owner Username (Z-A)");
-        store.setListOrder(ListSortType.USERNAME_ZA);
-        setAnchor(null);
-    };
+    const handleOwnerNameAZ = () => handleSort("Owner Username (A-Z)", ListSortType.USERNAME_AZ);
+
+    const handleOwnerNameZA = () => handleSort("Owner Username (Z-A)", ListSortType.USERNAME_ZA);
 
     const handleNewPlaylist = () => {
         store.createNewList();
