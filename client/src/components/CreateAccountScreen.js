@@ -12,6 +12,8 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate, useRef } from "react-router-dom";
+import { AuthContext } from '../auth/';
+import { GlobalStoreContext } from '../store/';
 
 const CreateAccountScreen = () => {
     const { auth } = useContext(AuthContext);

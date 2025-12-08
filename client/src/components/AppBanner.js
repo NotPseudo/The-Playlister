@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react';
 import { AppBar, Toolbar, Button, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
-import { AuthContext } from '../context/AuthContext';
-import { GlobalStoreContext } from '../context/GlobalStoreContext';
+import { AuthContext } from '../auth/';
+import { GlobalStoreContext } from '../store/';
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const AppBanner = () => {
