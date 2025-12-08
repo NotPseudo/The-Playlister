@@ -37,21 +37,36 @@ const CreateAccountScreen = () => {
     // Avatar state
     const [avatar, setAvatar] = useState(null);
 
+    const base64Encode = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);     // MUST be the File/Blob
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (e) => reject(e);
+        });
+    };
+
     const handleSelectAvatar = (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
         const img = new Image();
-        img.onload = () => {
-            if (img.width != 250 || img.height != 250) {
+        img.onload = async () => {
+            if (img.width !== 250 || img.height !== 250) {
                 event.target.value = "";
-                setErrorText("Image resolution must be 250x250")
+                setErrorText("Image resolution must be 250x250");
                 return;
             }
-            setAvatar(URL.createObjectURL(file));
+
+            // Convert FILE to base64
+            const base64 = await base64Encode(file);
+
+            setAvatar(base64);
+            setErrorText("");
         };
         img.src = URL.createObjectURL(file);
     };
+
 
     const handleCreateAccount = async () => {
         let res = await auth.registerUser(username, email, avatar, password, confirm);
