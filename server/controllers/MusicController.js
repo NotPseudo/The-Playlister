@@ -44,7 +44,7 @@ createPlaylist = async (req, res) => {
     if (!user) {
         return res.status(400).json({ success: false, error: "Owner user for playlist not found" })
     }
-    if (!await DB.addPlaylistToUser(user._id, playlist_.id)) {
+    if (!await DB.addPlaylistToUser(user._id, playlist._id)) {
         return res.status(500).json({ success: false, error: "Could not add the playlist to the user" })
     }
     return res.status(201).json({ success: true, playlist: returnPlaylist })
@@ -118,6 +118,7 @@ userInstanceToJSON = (instance) => {
     delete userJSON.email;
     delete userJSON.passwordHash;
     delete userJSON.playlists;
+    return userJSON;
 }
 
 songInstanceToJSON = async (instance) => {
