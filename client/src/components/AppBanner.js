@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { AppBar, Toolbar, Button, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { AppBar, Toolbar, Button, IconButton, Menu, MenuItem, Typography, Box, Avatar } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import  AuthContext  from '../auth';
@@ -90,27 +90,71 @@ const showTabButtons = path === "/playlists" || path === "/songs";
 
 return (
     <AppBar position="static">
-        <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleHome}>
-                <HomeIcon />
-            </IconButton>
-            {showTabButtons && (
-                <>
-                    <Button color="inherit" onClick={handlePlaylistsTab}>Playlists</Button>
-                    <Button color="inherit" onClick={handleSongsTab}>Song Catalog</Button>
-                </>
-            )}
-            <Typography variant="h6" style={{ flexGrow: 1, marginLeft: 20 }}>
+        <Toolbar sx={{ position: "relative", display: "flex", backgroundColor: "#ee04ff" }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton onClick={handleHome} sx={{
+                    backgroundColor: "white",
+                    color: "black",
+                    borderRadius: "50%",
+                    p: 1.2,
+                    "&:hover": {
+                        backgroundColor: "#eee"
+                    }
+                }}>
+                    <HomeIcon />
+                </IconButton>
+
+                {showTabButtons && (
+                    <>
+                        <Button onClick={handlePlaylistsTab}sx={{
+                            ml: 2,
+                            backgroundColor: "#1e1e1e",
+                            color: "white",
+                            borderRadius: 2,
+                            px: 3,
+                            fontSize: "1rem",
+                            "&:hover": {
+                                backgroundColor: "#333"
+                            }
+                        }}>Playlists</Button>
+                        <Button onClick={handleSongsTab}sx={{
+                            ml: 2,
+                            backgroundColor: "#3a64c4",
+                            color: "white",
+                            borderRadius: 2,
+                            px: 3,
+                            fontSize: "1rem",
+                            "&:hover": {
+                                backgroundColor: "#333"
+                            }
+                        }}>Song Catalog</Button>
+                    </>
+                )}
+            </Box>
+
+            <Typography
+                variant="h6"
+                sx={{
+                    position: "absolute",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontWeight: "bold"
+                }}
+            >
                 The Playlister
             </Typography>
-            <IconButton
-                edge="end"
-                color="inherit"
-                onClick={handleProfileMenuOpen}
-            >
-                <AccountCircle />
-            </IconButton>
+
+            <Box sx={{ marginLeft: "auto" }}>
+                <IconButton edge="end" color="inherit" onClick={handleProfileMenuOpen}>
+                    {
+                        auth.loggedIn ? <Avatar
+                        src={auth.user?.avatar}
+                    /> : <AccountCircle />
+                    }
+                </IconButton>
+            </Box>
         </Toolbar>
+
         {renderMenu}
     </AppBar>
 );
