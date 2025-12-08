@@ -19,7 +19,7 @@ const SongsScreen = () => {
                 display: "flex",
                 flexDirection: "row",
                 width: "100%",
-                height: "100%",
+                height: "calc(100vh - 64px)", 
                 p: 2,
                 boxSizing: "border-box",
                 backgroundColor: "#faf7dc",
