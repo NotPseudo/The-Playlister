@@ -165,7 +165,7 @@ export const updateSongById = async(id, newTitle, newArtist, newYear, newYouTube
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             title : newTitle,
-            artist, newArtist,
+            artist: newArtist,
             year: newYear,
             youTubeId: newYouTubeId
         })  
