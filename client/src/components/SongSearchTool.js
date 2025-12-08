@@ -31,7 +31,7 @@ const SongSearchTool = () => {
     const handleClearYear = () => setYear("");
 
     const handleSearch = () => {
-        store.searchAndLoadSongs({ title, artist, year });
+        store.searchAndLoadSongs( title, artist, year );
     };
 
     // const handleClear = () => {
