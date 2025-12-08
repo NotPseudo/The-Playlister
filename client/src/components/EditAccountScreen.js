@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import {
     Avatar,
     Box,
@@ -24,8 +24,13 @@ const EditAccountScreen = () => {
     const [username, setUsername] = useState(auth.user?.username || "");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
-
     const [avatar, setAvatar] = useState(auth.user?.avatar || null);
+
+    const [errorText, setErrorText] = useState("");
+    
+        useEffect(() => {
+            if (auth.error) setErrorText(auth.error);
+        }, [auth.error])
 
     const handleSelectAvatar = (event) => {
         const file = event.target.files[0];
@@ -35,6 +40,7 @@ const EditAccountScreen = () => {
         img.onload = () => {
             if (img.width != 250 || img.height != 250) {
                 event.target.value = "";
+                setErrorText("Image resolution must be 250x250")
                 return;
             }
             setAvatar(URL.createObjectURL(file));
@@ -85,7 +91,7 @@ const EditAccountScreen = () => {
                     variant="contained"
                     component="label"
                     sx={{ backgroundColor: "#555", ":hover": { backgroundColor: "#777" } }}
-                    onClick={fileInputRef.current.click()}
+                    onClick={() => fileInputRef.current?.click()}
                 >
                     Select Image
                     <input
@@ -147,6 +153,13 @@ const EditAccountScreen = () => {
                     ) : null
                 }}
             />
+
+            <Typography 
+                variant="body2"
+                sx={{ color: "red", mt: 1, minHeight: "20px" }}
+            >
+                {errorText}
+            </Typography>            
 
             <Box sx={{ display: "flex", gap: 2, mb: 5 }}>
                 <Button

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import {
     Avatar,
     Box,
@@ -28,6 +28,11 @@ const CreateAccountScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
+    const [errorText, setErrorText] = useState("");
+
+    useEffect(() => {
+        if (auth.error) setErrorText(auth.error);
+    }, [auth.error]);
 
     // Avatar state
     const [avatar, setAvatar] = useState(null);
@@ -40,6 +45,7 @@ const CreateAccountScreen = () => {
         img.onload = () => {
             if (img.width != 250 || img.height != 250) {
                 event.target.value = "";
+                setErrorText("Image resolution must be 250x250")
                 return;
             }
             setAvatar(URL.createObjectURL(file));
@@ -90,7 +96,7 @@ const CreateAccountScreen = () => {
                     variant="contained"
                     component="label"
                     sx={{ backgroundColor: "#555", ":hover": { backgroundColor: "#777" } }}
-                    onClick={fileInputRef.current.click()}
+                    onClick={() => fileInputRef.current?.click()}
                 >
                     Select Image
                     <input
@@ -168,6 +174,13 @@ const CreateAccountScreen = () => {
                     ) : null
                 }}
             />
+
+            <Typography 
+                variant="body2"
+                sx={{ color: "red", mt: 1, minHeight: "20px" }}
+            >
+                {errorText}
+            </Typography>
 
             <Button
                 variant="contained"

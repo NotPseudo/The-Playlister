@@ -50,10 +50,11 @@ export const loginUser = async (email, password) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({email: email, password: password})
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const logoutUser = async () => await fetchResToJSON(await fetch(baseURL + `/logout`, {
@@ -73,10 +74,11 @@ export const registerUser = async (username, email, avatar, password, passwordVe
             passwordVerify : passwordVerify
         })
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const editAccount = async (username, avatar, password, passwordVerify) => {
@@ -91,10 +93,11 @@ export const editAccount = async (username, avatar, password, passwordVerify) =>
             passwordVerify : passwordVerify
         })
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 

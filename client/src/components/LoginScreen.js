@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
     Box,
     Button,
@@ -21,6 +21,12 @@ const LoginScreen = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const [errorText, setErrorText] = useState("");
+
+    useEffect(() => {
+        if (auth.error) setErrorText(auth.error);
+    }, [auth.error])
 
     const handleLogIn = async () => {
         const res = await auth.loginUser(email, password);
@@ -99,6 +105,13 @@ const LoginScreen = () => {
             >
                 SIGN IN
             </Button>
+
+            <Typography 
+                variant="body2"
+                sx={{ color: "red", mt: 1, minHeight: "20px" }}
+            >
+                {errorText}
+            </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
                 Don’t have an account?{" "}
