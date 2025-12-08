@@ -4,6 +4,12 @@ const bcrypt = require('bcryptjs')
 
 const { DB } = require('../db/DatabaseManager.js')
 
+userInstanceToJSON = (instance) => {
+    let userJSON = instance.toJSON();
+    delete userJSON.passwordHash;
+    delete userJSON.playlists;
+}
+
 getLoggedIn = async (req, res) => {
     try {
         let userId = auth.verifyUser(req);
@@ -26,13 +32,10 @@ getLoggedIn = async (req, res) => {
         }
         console.log("loggedInUser: " + loggedInUser);
 
+        let returnUser = userInstanceToJSON(loggedInUser);
         return res.status(200).json({
             loggedIn: true,
-            user: {
-                firstName: loggedInUser.firstName,
-                lastName: loggedInUser.lastName,
-                email: loggedInUser.email
-            }
+            user: returnUser
         })
     } catch (err) {
         console.log("err: " + err);
@@ -77,17 +80,15 @@ loginUser = async (req, res) => {
         const token = auth.signToken(existingUser._id);
         console.log(token);
 
+        let returnUser = userInstanceToJSON(existingUser);
+
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: true
         }).status(200).json({
             success: true,
-            user: {
-                firstName: existingUser.firstName,
-                lastName: existingUser.lastName,  
-                email: existingUser.email              
-            }
+            user: returnUser
         })
 
     } catch (err) {
@@ -166,17 +167,15 @@ registerUser = async (req, res) => {
         const token = auth.signToken(savedToken);
         console.log("token:" + token);
 
+        let returnUser = userInstanceToJSON(savedUser);
+
         await res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: "none"
         }).status(200).json({
             success: true,
-            user: {
-                username: savedUser.username,
-                email: savedUser.email,
-                avatar: savedUser.avatar              
-            }
+            user: returnUser
         })
         console.log("token sent");
     } catch (err) {
@@ -234,17 +233,15 @@ editAccount = async (req, res) => {
         const token = auth.signToken(savedToken);
         console.log("token:" + token);
 
+        let returnUser = userInstanceToJSON(updatedUser);
+
         await res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: "none"
         }).status(200).json({
             success: true,
-            user: {
-                username: updatedUser.username,
-                email: updatedUser.email,
-                avatar: updatedUser.avatar              
-            }
+            user: returnUser
         })
         console.log("token sent");
     } catch (err) {
