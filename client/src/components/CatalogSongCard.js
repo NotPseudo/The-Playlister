@@ -56,8 +56,7 @@ export default function CatalogSongCard({ song }) {
         handleClose();
     };
     
-    const isOwner = auth.isLoggedIn && auth.user._id === song.user._id;
-    const isLoggedIn = auth.isLoggedIn;
+    const isOwner = auth.loggedIn && auth.user._id === song.owner._id;
 
     return (
         <Card
@@ -74,12 +73,12 @@ export default function CatalogSongCard({ song }) {
 
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                        {song.title} by {song.artist} ({song.year})
+                        {song.title} by {song.artist} ({song.year}) and ({auth.loggedIn})
                     </Typography>
 
-                    {isLoggedIn && (<IconButton onClick={handleExpandMain}>
+                    {auth.loggedIn && <IconButton onClick={handleExpandMain}>
                         <MoreVertIcon />
-                    </IconButton>)}
+                    </IconButton>}
                 </Box>
 
                 <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
@@ -98,7 +97,7 @@ export default function CatalogSongCard({ song }) {
                 onClose={handleClose}
             >
 
-                {isLoggedIn && (
+                {auth.loggedIn && (
                     <MenuItem onClick={handleAddToListClick}>
                         Add to Playlist
                     </MenuItem>
