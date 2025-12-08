@@ -2,6 +2,7 @@ import AppBanner from './AppBanner'
 import CatalogSongCard from './CatalogSongCard'
 import Copyright from './Copyright'
 import CreateAccountScreen from './CreateAccountScreen'
+import CreateSongModal from './CreateSongModal'
 import DeleteListModal from './DeleteListModal'
 import DeleteSongModal from './DeleteSongModal'
 import EditAccountScreen from './EditAccountScreen'
@@ -29,6 +30,7 @@ export {
     CatalogSongCard,
     Copyright,
     CreateAccountScreen,
+    CreateSongModal,
     DeleteListModal,
     DeleteSongModal,
     EditAccountScreen,

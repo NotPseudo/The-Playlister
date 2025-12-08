@@ -5,6 +5,8 @@ import SongSearchTool from "./SongSearchTool";
 import SongResults from "./SongResults";
 import GlobalStoreContext  from "../store";
 
+import {CreateSongModal, DeleteListModal, DeleteSongModal, EditPlaylistModal, EditSongModal} from './index.js'
+
 const SongsScreen = () => {
 
     const { store } = useContext(GlobalStoreContext)
@@ -60,6 +62,10 @@ const SongsScreen = () => {
             >
                 <SongResults />
             </Box>
+
+            <CreateSongModal />
+            <EditSongModal />
+            <DeleteSongModal />
         </Box>
     );
 };
