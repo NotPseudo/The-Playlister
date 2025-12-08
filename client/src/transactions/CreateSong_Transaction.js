@@ -16,10 +16,10 @@ export default class CreateSong_Transaction extends jsTPS_Transaction {
     }
 
     executeDo() {
-        this.store.createSong(this.index, this.song);
+        this.store.recreateSongInList(this.song._id, index);
     }
     
     executeUndo() {
-        this.store.removeSong(this.index);
+        this.store.removeSongFromList(this.song._id);
     }
 }
