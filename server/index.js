@@ -19,13 +19,13 @@ app.use(express.json())
 app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
-const authRouter = require('./routes/auth-router')
+const authRouter = require('./routes/AuthRouter')
 app.use('/auth', authRouter)
-const storeRouter = require('./routes/store-router')
+const storeRouter = require('./routes/MusicRouter')
 app.use('/store', storeRouter)
 
 // INITIALIZE OUR DATABASE OBJECT
-const { DB } = require('./db/DatabaseManager')
+const { DB } = require('./db/DatabaseManager.js')
 DB.connect();
 //db.on('error', console.error.bind(console, 'Database connection error:'))
 

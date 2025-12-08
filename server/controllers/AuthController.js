@@ -2,7 +2,7 @@ const auth = require('../auth/Auth')
 //const User = require('../models/user-model')
 const bcrypt = require('bcryptjs')
 
-const { DB } = require('../db/DatabaseManager')
+const { DB } = require('../db/DatabaseManager.js')
 
 getLoggedIn = async (req, res) => {
     try {

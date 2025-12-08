@@ -1,6 +1,6 @@
 const auth = require('../auth/Auth.js')
 
-const { DB, Playlist } = require('../db/DatabaseManager')
+const { DB, Playlist } = require('../db/DatabaseManager.js')
 
 const {isDefined} = require('../util/Util')
 

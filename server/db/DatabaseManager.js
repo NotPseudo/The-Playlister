@@ -1,5 +1,3 @@
-const DatabaseManager = require('../DatabaseManager');
-
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const Schema = mongoose.Schema
