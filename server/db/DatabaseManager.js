@@ -65,7 +65,7 @@ class DatabaseManager {
     }
 
     async createPlaylist(name, ownerId, songs, listeners) {
-        let playlist = new Playlist({name, owner: ownerId, songs, uniqueListeners: listeners});
+        let playlist = new Playlist({name: name, owner: ownerId, songs: songs, uniqueListeners: listeners});
         try {
             return await playlist.save();
         } catch (err) {
