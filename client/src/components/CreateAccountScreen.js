@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useRef } from "react";
 import {
     Avatar,
     Box,
@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useNavigate, useRef } from "react-router-dom";
-import { AuthContext } from '../auth/';
+import { useNavigate } from "react-router-dom";
+import AuthContext from '../auth/';
 import { GlobalStoreContext } from '../store/';
+import Copyright from "./Copyright";
 
 const CreateAccountScreen = () => {
     const { auth } = useContext(AuthContext);

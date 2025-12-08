@@ -4,7 +4,7 @@ import Copyright from './Copyright'
 import CreateAccountScreen from './CreateAccountScreen'
 import DeleteListModal from './DeleteListModal'
 import DeleteSongModal from './DeleteSongModal'
-import EditAccoutScreen from './EditAccountScreen'
+import EditAccountScreen from './EditAccountScreen'
 import EditPlaylistModal from './EditPlaylistModal'
 import EditSongModal from './EditSongModal'
 import HomeScreen from './HomeScreen'
@@ -32,7 +32,7 @@ export {
     CreateAccountScreen,
     DeleteListModal,
     DeleteSongModal,
-    EditAccoutScreen,
+    EditAccountScreen,
     EditPlaylistModal,
     EditSongModal,
     HomeScreen,

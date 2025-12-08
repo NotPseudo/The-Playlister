@@ -11,7 +11,7 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-import { AuthContext } from '../auth/';
+import AuthContext from '../auth/';
 import { GlobalStoreContext } from '../store/';
 
 const PlaylistCard = ({ playlist }) => {

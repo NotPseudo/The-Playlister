@@ -13,7 +13,7 @@ import RedoIcon from "@mui/icons-material/Redo";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import AddIcon from "@mui/icons-material/Add";
 
-import { AuthContext } from "../auth";
+import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
 export default function EditPlaylistModal({ open, onClose, playlist }) {

@@ -10,7 +10,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-import { AuthContext } from '../auth/';
+import AuthContext from '../auth/';
 import { GlobalStoreContext, SongSortType } from '../store/';
 
 import CatalogSongCard from "./CatalogSongCard";

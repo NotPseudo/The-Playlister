@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
-import { AuthContext } from "../auth";
+import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
-export default function DeleteSongModal({ open, song }) {
+export default function DeleteSongModal({ song }) {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
@@ -19,7 +19,7 @@ export default function DeleteSongModal({ open, song }) {
     };
 
     return (
-        <Modal open={store.currentModal == "DELETE_SONG"} onClose={onClose}>
+        <Modal open={store.currentModal == "DELETE_SONG"}>
             <Box
                 sx={{
                     position: "absolute",

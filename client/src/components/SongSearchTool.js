@@ -10,7 +10,7 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 
-import { AuthContext } from '../auth/';
+import AuthContext from '../auth/';
 import { GlobalStoreContext } from '../store/';
 
 const SongSearchTool = () => {

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AuthContext } from "../auth";
+import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
 import {

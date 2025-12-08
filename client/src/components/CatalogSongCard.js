@@ -9,7 +9,7 @@ import {
     MenuItem,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { AuthContext } from "../auth";
+import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
 export default function CatalogSongCard({ song }) {

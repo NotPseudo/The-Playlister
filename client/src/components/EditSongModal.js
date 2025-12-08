@@ -8,7 +8,7 @@ import {
     Button,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-import { AuthContext } from "../auth";
+import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
 export default function EditSongModal({ song }) {

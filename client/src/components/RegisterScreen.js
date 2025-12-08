@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { AuthContext } from '../auth/';
+import AuthContext from '../auth/';
 import { GlobalStoreContext } from '../store/';
 
 export default function RegisterScreen() {
