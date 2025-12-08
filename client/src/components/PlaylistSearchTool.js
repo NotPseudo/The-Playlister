@@ -40,13 +40,13 @@ const PlaylistSearchTool = () => {
     const handleClearYear = () => setYear("");
 
     const handleSearch = () => {
-        store.searchAndLoadLists({
+        store.searchAndLoadLists(
             listName,
             userName,
             title,
             artist,
             year,
-        });
+        );
     };
 
     const handleClear = () => {

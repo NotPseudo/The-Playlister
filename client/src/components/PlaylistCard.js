@@ -20,7 +20,7 @@ const PlaylistCard = ({ playlist }) => {
 
     const [isExpanded, setExpanded] = useState(false);
 
-    const userIsOwner = auth.loggedIn && auth.user?._id === playlist.owner;
+    const userIsOwner = auth.loggedIn && auth.user?._id === playlist.owner._id; 
     const userLoggedIn = auth.loggedIn;
 
     const handleExpand = () => setExpanded(true);

@@ -3,11 +3,11 @@ import { Box } from "@mui/material";
 
 import SongSearchTool from "./SongSearchTool";
 import SongResults from "./SongResults";
-import { GlobalStoreContextProvider }  from "../store";
+import GlobalStoreContext  from "../store";
 
 const SongsScreen = () => {
 
-    const { store } = useContext(GlobalStoreContextProvider)
+    const { store } = useContext(GlobalStoreContext)
 
     useEffect(() => {
         store.findAndLoadOwnedLists();

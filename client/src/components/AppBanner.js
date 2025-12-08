@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, IconButton, Menu, MenuItem, Typography } from 
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import HomeIcon from '@mui/icons-material/Home';
 import  AuthContext  from '../auth';
-import { GlobalStoreContext } from '../store/';
+import  GlobalStoreContext from '../store/';
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const AppBanner = () => {

@@ -113,7 +113,7 @@ const SongResults = () => {
                     gap: 2,
                 }}
             >
-                {store.songs.map((song) => (
+                {store.songResults.map((song) => (
                     <CatalogSongCard key={song._id} song={song} />
                 ))}
             </Box>
