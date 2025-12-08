@@ -25,6 +25,6 @@ router.patch('/playlist/:id/listen', auth.verify, MusicController.listenToPlayli
 router.patch('/song/:id/listen', auth.verify, MusicController.listenToSong)
 
 router.get('/playlists', auth.verify, MusicController.searchForPlaylists)
-router.get('/song/', auth.verify, MusicController.searchForSongs)
+router.get('/songs/', auth.verify, MusicController.searchForSongs)
 
 module.exports = router

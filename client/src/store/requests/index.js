@@ -213,7 +213,7 @@ export const searchForPlaylists = async(listName, ownerName, searchTitle, search
     params.append("songArtist", searchArtist);
     params.append("songYear", searchYear);
 
-    let res = await fetch(baseURL + `/playlist?${params.toString()}`, {
+    let res = await fetch(baseURL + `/playlists?${params.toString()}`, {
         method: 'GET',
         credentials: 'include'
     });
@@ -240,7 +240,7 @@ export const searchForSongs = async(songTitle, songArtist, songYear) => {
     params.append("artist", songArtist);
     params.append("year", songYear);
 
-    let res = await fetch(baseURL + `/song?${params.toString()}`, {
+    let res = await fetch(baseURL + `/songs?${params.toString()}`, {
         method: 'GET',
         credentials: 'include'
     });
