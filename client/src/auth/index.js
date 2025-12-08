@@ -100,12 +100,23 @@ function AuthContextProvider(props) {
                 console.log("NOW WE LOGIN");
                 auth.loginUser(email, password);
                 console.log("LOGGED IN");
+            } else {
+                console.log("response.data.error: " + response.data.error)
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: null,
+                        loggedIn: false,
+                        error: response.data.error
+                    }
+                })
             }
         } catch(error){
+            console.log("error.response.data.error: " + error.response.data.error)
             authReducer({
                 type: AuthActionType.REGISTER_USER,
                 payload: {
-                    user: auth.user,
+                    user: null,
                     loggedIn: false,
                     error: error.response.data.error
                 }
@@ -128,6 +139,16 @@ function AuthContextProvider(props) {
                     }
                 })
                 return true;
+            } else {
+                console.log("response.data.error: " + response.data.error)
+                authReducer({
+                    type: AuthActionType.EDIT_USER,
+                    payload: {
+                        user: null,
+                        loggedIn: false,
+                        error: response.data.error
+                    }
+                })
             }
         } catch(error){
             authReducer({
@@ -155,6 +176,16 @@ function AuthContextProvider(props) {
                     }
                 })
                 return true;
+            } else {
+                console.log("response.data.error: " + response.data.error)
+                authReducer({
+                    type: AuthActionType.LOGIN_USER,
+                    payload: {
+                        user: null,
+                        loggedIn: false,
+                        error: response.data.error
+                    }
+                })
             }
         } catch(error){
             authReducer({

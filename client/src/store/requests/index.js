@@ -54,10 +54,11 @@ export const createPlaylist = async (newListName, newSongs, userId) => {
             listeners: []
         })
     })
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const createSong = async (title, artist, year, youTubeId, ownerId) => {
@@ -75,10 +76,11 @@ export const createSong = async (title, artist, year, youTubeId, ownerId) => {
             listens: 0
         })
     })
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const deletePlaylistById = async (id) => await fetchResToJSON(await fetch(baseURL + `/playlist/${id}`, {
@@ -109,10 +111,11 @@ export const updatePlaylistName = async(playlistId, newName) => {
             name: newName
         })  
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const createSongInPlaylist = async(playlistId, songId, index) => {
@@ -126,10 +129,11 @@ export const createSongInPlaylist = async(playlistId, songId, index) => {
             index: index
         })  
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const moveSongInPlaylist = async(playlistId, from, to) => {
@@ -143,10 +147,11 @@ export const moveSongInPlaylist = async(playlistId, from, to) => {
             toIndex: to
         })  
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const removeSongFromPlaylist = async(playlistId, songId) => {
@@ -159,10 +164,11 @@ export const removeSongFromPlaylist = async(playlistId, songId) => {
             songId : songId
         })  
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const updateSongById = async(id, newTitle, newArtist, newYear, newYouTubeId) => {
@@ -177,10 +183,11 @@ export const updateSongById = async(id, newTitle, newArtist, newYear, newYouTube
             youTubeId: newYouTubeId
         })  
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const listenToPlaylist = async(playlistId) => {
@@ -188,10 +195,11 @@ export const listenToPlaylist = async(playlistId) => {
         method: 'PATCH',
         credentials: 'include'
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const listenToSong = async(songId) => {
@@ -199,13 +207,19 @@ export const listenToSong = async(songId) => {
         method: 'PATCH',
         credentials: 'include'
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const searchForPlaylists = async(listName, ownerName, searchTitle, searchArtist, searchYear) => {
+    console.log("name", listName);
+    console.log("username", ownerName);
+    console.log("songTitle", searchTitle);
+    console.log("songArtist", searchArtist);
+    console.log("songYear", searchYear);
     const params = new URLSearchParams();
     params.append("name", listName);
     params.append("username", ownerName);
@@ -217,10 +231,11 @@ export const searchForPlaylists = async(listName, ownerName, searchTitle, search
         method: 'GET',
         credentials: 'include'
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const searchOwnedPlaylists = async() => {
@@ -228,10 +243,11 @@ export const searchOwnedPlaylists = async() => {
         method: 'GET',
         credentials: 'include'
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 export const searchForSongs = async(songTitle, songArtist, songYear) => {
@@ -244,10 +260,11 @@ export const searchForSongs = async(songTitle, songArtist, songYear) => {
         method: 'GET',
         credentials: 'include'
     });
+    let resJSON = await fetchResToJSON(res);
     if (res.ok) {
-        return await fetchResToJSON(res);
+        return resJSON;
     }
-    return { data: { success: false }, status: res.status }
+    return { data: { success: false, error: resJSON.data?.error }, status: res.status }
 }
 
 const apis = {
