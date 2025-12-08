@@ -1,6 +1,8 @@
 const auth = require('../auth/Auth.js')
 
-const { DB, Playlist } = require('../db/DatabaseManager.js')
+const { DB } = require('../db/DatabaseManager.js')
+
+const Playlist = require('../models/PlaylistModel.js')
 
 const {isDefined} = require('../util/Util')
 
@@ -317,22 +319,27 @@ searchForPlaylists = async (req, res) => {
     let { name, username, songTitle, songArtist, songYear } = req.query;
     let matchConditions = {};
     if (isDefined(name)) {
+        console.log("name defined: " + name)
         matchConditions.name = { $regex: name, $options: "i" };
         anyFieldDefined = true;
     }
     if (isDefined(username)) {
+        console.log("username defined: " + username)
         matchConditions["ownerData.username"] = { $regex: username, $options: "i" };
         anyFieldDefined = true;
     }
     if (isDefined(songTitle)) {
+        console.log("songTitle defined: " + songTitle)
         matchConditions["songsData.title"] = { $regex: songTitle, $options: "i" };
         anyFieldDefined = true;
     }
     if (isDefined(songArtist)) {
+        console.log("songArtist defined: " + songArtist)
         matchConditions["songsData.artist"] = { $regex: songArtist, $options: "i" };
         anyFieldDefined = true;
     }
     if (isDefined(songYear)) {
+        console.log("songYear defined: " + songYear)
         matchConditions["songsData.year"] = parseInt(songYear);
         anyFieldDefined = true;
     }
@@ -357,8 +364,10 @@ searchForPlaylists = async (req, res) => {
         for (let l of lists) {
             listsJSON.push(await playlistInstanceToJSON(l));
         }
+        console.log("List Search Results: " + JSON.stringify(listsJSON));
         return res.status(200).json({ success: true, playlists: listsJSON });
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ success: false, error: err });
     }
 };

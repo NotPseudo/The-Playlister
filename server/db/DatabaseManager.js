@@ -1,12 +1,11 @@
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-const Schema = mongoose.Schema
-const ObjectId = Schema.Types.ObjectId
-dotenv.config();
 
-let Playlist;
-let User;
-let Song;
+const Playlist = require('../models/PlaylistModel.js')
+const User = require('../models/UserModel.js')
+const Song = require('../models/SongModel.js')
+
+dotenv.config();
 
 const {isDefined} = require('../util/Util');
 
@@ -24,44 +23,6 @@ class DatabaseManager {
             console.error('Connection error', err.message)
             return null;
         }   
-    }
-
-    async defineModels() {
-        const PlaylistSchema = new Schema(
-            {
-                name: { type: String, required: true },
-                owner: { type: ObjectId, ref: 'User', required: true },
-                songs: [{type: ObjectId, ref: 'Song'}],
-                uniqueListeners: [{ type: ObjectId, ref: 'User' }]
-            },
-            { timestamps: true },
-        )
-        const UserSchema = new Schema(
-            {
-                username: { type: String, required: true },
-                email: { type: String, required: true, unique: true },
-                avatar: { type: String, required: true },
-                passwordHash: { type: String, required: true },
-                playlists: [{type: ObjectId, ref: 'Playlist'}]
-            },
-            { timestamps: true },
-        )
-        const SongSchema = new Schema(
-            {
-                title: { type: String, required: true },
-                artist: { type: String, required: true },
-                year: { type: Number, required: true },
-                youTubeId: { type: String, required: true },
-                owner: { type: ObjectId, ref: 'User', required: true },
-                playlists: [{type: ObjectId, ref: 'Playlist'}],
-                listens: { type: Number, default: 0}
-            },
-            { timestamps: true },
-        )
-        Playlist = mongoose.model('Playlist', PlaylistSchema);
-        User = mongoose.model('User', UserSchema);
-        Song = mongoose.model('Song', SongSchema);
-        console.log("Models defined");
     }
 
     async createPlaylist(name, ownerId, songs, listeners) {
