@@ -23,6 +23,7 @@ console.log("create GlobalStoreContext");
 // DATA STORE STATE THAT CAN BE PROCESSED
 export const GlobalStoreActionType = {
     SEARCH_AND_LOAD_LISTS: "SEARCH_AND_LOAD_LISTS",
+    SEARCH_AND_LOAD_OWNED: "SEARCH_AND_LOAD_OWNED",
     SORT_LISTS: "SORT_LISTS",
 
     CREATE_NEW_LIST: "CREATE_NEW_LIST",
@@ -137,6 +138,12 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     playlistResults: payload.playlists
                 });
+            }
+            case GlobalStoreActionType.SEARCH_AND_LOAD_OWNED: {
+                return setStore({
+                    playlistResults: payload.playlists,
+                    recentEditLists: payload.recentlyEdited 
+                })
             }
             case GlobalStoreActionType.SORT_LISTS: {
                 return setStore({
@@ -290,6 +297,28 @@ function GlobalStoreContextProvider(props) {
         asyncSearchLists(name, ownerName, songTitle, songArtist, songYear);
     }
 
+    store.findAndLoadOwnedLists = () => {
+        if (!auth.loggedIn) {
+            storeReducer({
+                type: GlobalStoreActionType.SEARCH_AND_LOAD_OWNED,
+                payload: {playlists: [], recentlyEdited: []}
+            })
+            return;
+        }
+        async function asyncFindOwned() {
+            const response = await storeRequestSender.searchOwnedPlaylists();
+            if (response.data.success) {
+                let recentEdit = response.data.playlists.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                let sorted = store.sortListResults(store.listSortType, response.data.playlists);
+                storeReducer({
+                    type: GlobalStoreActionType.SEARCH_AND_LOAD_OWNED,
+                    payload: {playlists: sorted, recentlyEdited: recentEdit}
+                })
+            }
+        }
+        asyncFindOwned();
+    }
+
     store.setListSortOrder = (sortType) => {
         let newSort = store.sortListResults(sortType, store.playlistResults);
         storeReducer({
@@ -314,10 +343,10 @@ function GlobalStoreContextProvider(props) {
                 return toSort.sort((a, b) => b.name.localeCompare(a.name));
             }
             case ListSortType.USERNAME_AZ: {
-                return toSort.sort((a, b) => a.ownerName.localeCompare(b.ownerName));
+                return toSort.sort((a, b) => a.owner.username.localeCompare(b.owner.username));
             }
             case ListSortType.USERNAME_ZA: {
-                return toSort.sort((a, b) => b.ownerName.localeCompare(a.ownerName));
+                return toSort.sort((a, b) => b.owner.username.localeCompare(a.owner.username));
             }   
         }
         return toSort;
@@ -487,6 +516,7 @@ function GlobalStoreContextProvider(props) {
                 })
             }
         }
+        asyncDeleteList(store.deleteListId);
     }
 
     store.searchAndLoadSongs = (title, artist, year) => {

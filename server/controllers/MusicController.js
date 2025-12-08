@@ -113,10 +113,18 @@ deleteSong = async (req, res) => {
     return res.status(200).json({success: true});
 }
 
+userInstanceToJSON = (instance) => {
+    let userJSON = instance.toJSON();
+    delete userJSON.email;
+    delete userJSON.passwordHash;
+    delete userJSON.playlists;
+}
+
 songInstanceToJSON = async (instance) => {
     let songJSON = instance.toJSON();
     let user = await DB.findUser({_id: instance.owner});
-    songJSON.ownerName = user.username;
+    songJSON.owner = userInstanceToJSON(user);
+    //songJSON.ownerName = user.username;
     songJSON.playlists = instance.playlists.length;
     return songJSON;
 }
@@ -135,11 +143,11 @@ playlistInstanceToJSON = async (instance) => {
         }
     }
     let user = await DB.findUser({_id: instAsObj.owner});
+    let owner = userInstanceToJSON(user);
     return {
         _id: instAsObj._id,
         name: instAsObj.name,
-        owner: instAsObj.owner,
-        ownerName: user.username,
+        owner: owner,
         songs: songsJSON,
         uniqueListeners: instAsObj.uniqueListeners.length,
         createdAt: instAsObj.createdAt,
