@@ -141,23 +141,27 @@ function GlobalStoreContextProvider(props) {
         switch (type) {
             case GlobalStoreActionType.SEARCH_AND_LOAD_LISTS: {
                 return setStore({
+                    ...store,
                     playlistResults: payload.playlists
                 });
             }
             case GlobalStoreActionType.SEARCH_AND_LOAD_OWNED: {
                 return setStore({
+                    ...store,
                     playlistResults: payload.playlists,
                     recentEditLists: payload.recentlyEdited 
                 })
             }
             case GlobalStoreActionType.SORT_LISTS: {
                 return setStore({
+                    ...store,
                     playlistResults: payload.playlists,
                     listSortType: payload.sortType
                 })
             }
             case GlobalStoreActionType.CREATE_NEW_LIST: {                
                 return setStore({
+                    ...store,
                     playlistResults: payload.playlists,
                     recentEditLists: payload.recentEditLists,
                     newListCounter: payload.newCounter
@@ -165,38 +169,45 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.DUPLICATE_LIST: {                
                 return setStore({
+                    ...store,
                     playlistResults: payload.playlists,
                     recentEditLists: payload.recentEditLists,
                 })
             }
             case GlobalStoreActionType.SET_EDIT_LIST: {
                 return setStore({
+                    ...store,
                     editList: payload.list,
                     currentModal: CurrentModal.EDIT_LIST,
                 });
             }
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
+                    ...store,
                     editList: payload.list
                 });
             }
             case GlobalStoreActionType.REMOVE_SONG_FROM_LIST: {
                 return setStore({
+                    ...store,
                     editList: payload.list
                 });
             }
             case GlobalStoreActionType.RECREATE_SONG_IN_LIST: {
                 return setStore({
+                    ...store,
                     editList: payload.list
                 });
             }
             case GlobalStoreActionType.MOVE_SONG_IN_LIST: {
                 return setStore({
+                    ...store,
                     editList: payload.list
                 });
             }
             case GlobalStoreActionType.CLOSE_EDIT_LIST: {
                 return setStore({
+                    ...store,
                     editList: null,
                     currentModal: CurrentModal.NONE,
                     recentEditLists: payload.ownedLists
@@ -204,50 +215,59 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.ADD_SONG_TO_LIST: {
                 return setStore({
+                    ...store,
                     songResults: payload.songs
                 });
             }
             case GlobalStoreActionType.MARK_LIST_FOR_DELETION: {
                 return setStore({
+                    ...store,
                     deleteList: payload.list,
                     currentModal: CurrentModal.DELETE_LIST
                 });
             }
             case GlobalStoreActionType.DELETE_LIST: {
                 return setStore({
+                    ...store,
                     playlistResults: payload.playlists,
                     recentEditLists: payload.ownedLists
                 })
             }
             case GlobalStoreActionType.SEARCH_AND_LOAD_SONGS: {
                 return setStore({
+                    ...store,
                     songResults: payload.songs
                 });
             }
             case GlobalStoreActionType.SORT_SONGS: {
                 return setStore({
+                    ...store,
                     songResults: payload.songs,
                     songSortType: payload.sortType
                 });
             }
             case GlobalStoreActionType.START_CREATE_NEW_SONG: {
                 return setStore({
+                    ...store,
                     currentModal: CurrentModal.CREATE_SONG
                 });
             }
             case GlobalStoreActionType.COMPLETE_CREATE_NEW_SONG: {
                 return setStore({
+                    ...store,
                     currentModal: CurrentModal.NONE
                 })
             }
             case GlobalStoreActionType.SET_EDIT_SONG: {
                 return setStore({
+                    ...store,
                     editSong: payload.song,
                     currentModal: CurrentModal.EDIT_SONG
                 });
             }
             case GlobalStoreActionType.COMPLETE_EDIT_SONG: {
                 return setStore({
+                    ...store,
                     editSong: null,
                     currentModal: CurrentModal.NONE,
                     songResults: payload.songs
@@ -255,23 +275,27 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.CLOSE_EDIT_SONG: {
                 return setStore({
+                    ...store,
                     editSong: null,
                     currentModal: CurrentModal.NONE
                 });
             }
             case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
                 return setStore({
+                    ...store,
                     deleteSongId: payload.song,
                     currentModal: CurrentModal.DELETE_SONG
                 });
             }
             case GlobalStoreActionType.SET_CATALOG_PLAYING_SONG: {
                 return setStore({
+                    ...store,
                     catalogPlayingSong: payload.song
                 });
             }
             case GlobalStoreActionType.SET_PLAYING_LIST: {
                 return setStore({
+                    ...store,
                     playingList: payload.playlist,
                     playingSongIndex: 0,
 
@@ -280,6 +304,7 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.CLOSE_PLAYING_LIST: {
                 return setStore({
+                    ...store,
                     playingList: null,
                     playingSongIndex: null,
 
@@ -288,6 +313,7 @@ function GlobalStoreContextProvider(props) {
             }
             case GlobalStoreActionType.HIDE_MODALS: {
                 return setStore({
+                    ...store,
                     currentModal: CurrentModal.NONE
                 });
             }
@@ -377,6 +403,7 @@ function GlobalStoreContextProvider(props) {
                 origCount++;
                 name = "Untitled" + origCount
             }
+            console.log("createNewList auth: " + JSON.stringify(auth));
             const response = await storeRequestSender.createPlaylist(name, [], auth.user._id);
             if (response.data.success) {
                 const sortResponse = await storeRequestSender.searchOwnedPlaylists();
