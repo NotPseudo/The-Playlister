@@ -3,13 +3,12 @@ import { Modal, Box, Typography, Button } from "@mui/material";
 import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
-export default function DeleteSongModal({ song }) {
+export default function DeleteSongModal() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
     const handleConfirm = (event) => {
         event.stopPropagation();
-        store.removeSongFromCatalog(song._id);
         store.deleteMarkedSong();
     };
 

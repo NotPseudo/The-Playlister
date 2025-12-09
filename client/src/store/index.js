@@ -51,6 +51,7 @@ export const GlobalStoreActionType = {
     CLOSE_EDIT_SONG: "CLOSE_EDIT_SONG",
 
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
+    DELETE_SONG: "DELETE_SONG",
 
     SET_CATALOG_PLAYING_SONG: "SET_CATALOG_PLAYING_SONG",
 
@@ -229,6 +230,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.DELETE_LIST: {
                 return setStore({
                     ...store,
+                    currentModal: CurrentModal.NONE,
                     playlistResults: payload.playlists,
                     recentEditLists: payload.ownedLists
                 })
@@ -283,9 +285,16 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
                 return setStore({
                     ...store,
-                    deleteSongId: payload.song,
+                    deleteSong: payload.song,
                     currentModal: CurrentModal.DELETE_SONG
                 });
+            }
+            case GlobalStoreActionType.DELETE_SONG: {
+                return setStore({
+                    ...store,
+                    currentModal: CurrentModal.NONE,
+                    songResults: payload.songs,
+                })
             }
             case GlobalStoreActionType.SET_CATALOG_PLAYING_SONG: {
                 return setStore({
@@ -696,6 +705,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.markSongForDeletion = (song) => {
+        console.log("markSongForDeletion song: " + song)
         storeReducer({
             type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
             payload: {song: song}
@@ -703,18 +713,18 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.deleteMarkedSong = () => {
-        let songId = store.deleteSong._id;
-        async function asyncDeleteSong(id) {
-            const response = await storeRequestSender.deleteSongById(id);
+        async function asyncDeleteSong(songId) {
+            const response = await storeRequestSender.deleteSongById(songId);
             if (response.data.success) {
-                let newSongs = store.songResults.filter(s => s._id !== id);
+                let newSongs = store.songResults.filter(s => s._id !== songId);
                 storeReducer({
-                    type: GlobalStoreActionType.SEARCH_AND_LOAD_SONGS,
+                    type: GlobalStoreActionType.DELETE_SONG,
                     payload: {songs: newSongs}
                 })
             }
         }
-        asyncDeleteSong(songId);
+        console.log("deleteMarkedSong _id: " + store.deleteSong._id);
+        asyncDeleteSong(store.deleteSong._id);
     }
 
     store.setCatalogPlayingSong = (song) => {

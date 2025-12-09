@@ -46,7 +46,7 @@ export default function CatalogSongCard({ song }) {
 
     const handleRemoveFromCatalog = (event) => {
         event.stopPropagation();
-        store.markSongForDeletion(song._id);
+        store.markSongForDeletion(song);
         handleClose();
     };
 
