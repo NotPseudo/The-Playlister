@@ -24,6 +24,7 @@ const SongsScreen = () => {
                 height: "calc(100vh - 64px)", 
                 width: "100%",
                 backgroundColor: "#faf7dc",
+                overflow: "hidden"
             }}
         >
             <Box
@@ -55,10 +56,7 @@ const SongsScreen = () => {
             <Box
                 sx={{
                     flexGrow: 1,
-                    p: 3,
-                    boxSizing: "border-box",
-                    backgroundColor: "#faf7df",
-                    overflowY: "auto",
+                    display: "flex"
                 }}
             >
                 <SongResults />

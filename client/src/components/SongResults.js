@@ -105,12 +105,12 @@ const SongResults = () => {
 
             <Box
                 sx={{
-                    flexGrow: 1,
+                    height: "100%",
                     overflowY: "auto",
                     pr: 1,
                     display: "flex",
                     flexDirection: "column",
-                    gap: 2,
+                    gap: 2
                 }}
             >
                 {store.songResults.map((song) => (
@@ -134,7 +134,7 @@ const SongResults = () => {
                     New Song
                 </Button>
             </Box>
-            }
+        }
         </Box>
     );
 };

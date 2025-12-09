@@ -66,6 +66,9 @@ export default function CatalogSongCard({ song }) {
                 p: 1,
                 bgcolor: song.index % 2 === 0 ? "#FFEAA7" : "#FFF9C4",
                 border: "2px solid #E57373",
+
+                flexShrink: 0,          // don't let flexbox squeeze the card
+                minHeight: 72
             }}
             onClick={handleCardClick}
         >
