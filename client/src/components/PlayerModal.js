@@ -27,7 +27,7 @@ export default function PlayerModal() {
 
     const [playingStatus, setPlayingStatus] = useState("PAUSED");
     const [index, setIndex] = useState(0);
-    const [songId, setSongId] = useState("yUC0mvx2RgE");
+    const [songId, setSongId] = useState("");
 
     const [player, setPlayer] = useState(null);
 
@@ -61,7 +61,7 @@ export default function PlayerModal() {
     };
 
     const handlePrevious = () => {
-        let newIndex = (index - 1) % playlist.songs.length;
+        let newIndex = (((index - 1) % playlist.songs.length) + playlist.songs.length) % playlist.songs.length;
         setPlaying(newIndex)
     };
 

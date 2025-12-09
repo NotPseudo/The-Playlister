@@ -59,6 +59,14 @@ export default function EditPlaylistModal() {
         store.hideModals();
     };
 
+    const handleKeyDown = (e) => {
+
+
+        if (e.key === "Enter" && listName !== "") store.editListChangeName(listName);
+
+
+    }
+
     return (
         <Modal open={store.currentModal === "EDIT_LIST"}>
             <Box
@@ -72,6 +80,9 @@ export default function EditPlaylistModal() {
                     borderRadius: 2,
                     boxShadow: 24,
                     outline: "none",
+                    display: "flex",
+                    flexDirection: "column",
+                    maxHeight: 600  
                 }}
             >
                 <Box
@@ -107,6 +118,7 @@ export default function EditPlaylistModal() {
                             label="Playlist Name"
                             value={listName}
                             onChange={handleUpdateListName}
+                            onKeyDown={handleKeyDown}
                             InputProps={{
                                 endAdornment: (
                                     <IconButton onClick={handleClearName}>
