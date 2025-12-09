@@ -6,35 +6,34 @@ import {
     TextField,
     IconButton,
     Button,
+    InputAdornment
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
 
-export default function EditSongModal({ song }) {
+export default function EditSongModal() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    const original = {
-        title: song?.title || "",
-        artist: song?.artist || "",
-        year: song?.year || "",
-        youTubeId: song?.youTubeId || "",
-    };
+    const [original, setOriginal] = useState(null);
 
-    const [title, setTitle] = useState(original.title);
-    const [artist, setArtist] = useState(original.artist);
-    const [year, setYear] = useState(original.year);
-    const [youTubeId, setYouTubeId] = useState(original.youTubeId);
+const [title, setTitle] = useState("");
+const [artist, setArtist] = useState("");
+const [year, setYear] = useState("");
+const [youTubeId, setYouTubeId] = useState("");
 
     useEffect(() => {
-        if (song) {
-            setTitle(song.title);
-            setArtist(song.artist);
-            setYear(song.year);
-            setYouTubeId(song.youTubeId);
+        if (store.currentModal === "EDIT_SONG" && store.editSong) {
+            setOriginal({ ...store.editSong });
+            setTitle(store.editSong.title);
+            setArtist(store.editSong.artist);
+            setYear(store.editSong.year);
+            setYouTubeId(store.editSong.youTubeId);
+            console.log("Modal opened with song:", store.editSong);
+console.log("Loaded original:", original);
         }
-    }, [song]);
+    }, [store.currentModal]);
 
     const handleUpdateTitle = (e) => setTitle(e.target.value);
     const handleUpdateArtist = (e) => setArtist(e.target.value);
@@ -46,20 +45,49 @@ export default function EditSongModal({ song }) {
     const clearYear = () => setYear("");
     const clearYoutubeId = () => setYouTubeId("");
 
-    const hasChanges =
+    const hasChanges = original && (
         title !== original.title ||
         artist !== original.artist ||
         year !== original.year ||
-        youTubeId !== original.youTubeId;
+        youTubeId !== original.youTubeId
+    );
+        
 
     const handleConfirm = () => {
-        if (!hasChanges) return;
-        store.editSong(song._id, title, artist, year, youTubeId);
+        if (!hasChanges) {
+            console.log("No changes")
+            return;
+        }
+        store.performEditSong(original._id, title, artist, year, youTubeId);
     };
 
     const handleCancel = () => {
         store.closeEditSong();
     };
+
+    const renderInput = (label, value, onChange, onClear) => (
+        <TextField
+            label={label}
+            value={value}
+            onChange={onChange}
+            //onKeyDown={handleKeyDown}
+            fullWidth
+            sx={{
+                mb: 3,
+                backgroundColor: "#e3ddea",
+                borderRadius: "6px"
+            }}
+            InputProps={{
+                endAdornment: value && (
+                    <InputAdornment position="end">
+                        <IconButton onClick={onClear}>
+                            <ClearIcon />
+                        </IconButton>
+                    </InputAdornment>
+                )
+            }}
+        />
+    );
 
     return (
         <Modal open={store.currentModal === "EDIT_SONG"} onClose={handleCancel}>
@@ -96,66 +124,11 @@ export default function EditSongModal({ song }) {
                 </Box>
 
                 <Box sx={{ px: 4, py: 3, display: "flex", flexDirection: "column", gap: 3 }}>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Title"
-                        value={title}
-                        onChange={handleUpdateTitle}
-                        InputProps={{
-                            endAdornment: (
-                                <IconButton onClick={clearTitle}>
-                                    <ClearIcon />
-                                </IconButton>
-                            ),
-                        }}
-                    />
-
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Artist"
-                        value={artist}
-                        onChange={handleUpdateArtist}
-                        InputProps={{
-                            endAdornment: (
-                                <IconButton onClick={clearArtist}>
-                                    <ClearIcon />
-                                </IconButton>
-                            ),
-                        }}
-                    />
-
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Year"
-                        value={year}
-                        onChange={handleUpdateYear}
-                        InputProps={{
-                            endAdornment: (
-                                <IconButton onClick={clearYear}>
-                                    <ClearIcon />
-                                </IconButton>
-                            ),
-                        }}
-                    />
-
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="YouTube Id"
-                        value={youTubeId}
-                        onChange={handleUpdateYoutubeId}
-                        InputProps={{
-                            endAdornment: (
-                                <IconButton onClick={clearYoutubeId}>
-                                    <ClearIcon />
-                                </IconButton>
-                            ),
-                        }}
-                    />
-                </Box>
+                                    {renderInput("Title", title, handleUpdateTitle, clearTitle)}
+                                    {renderInput("Artist", artist, handleUpdateArtist, clearArtist)}
+                                    {renderInput("Year", year, handleUpdateYear, clearYear)}
+                                    {renderInput("YouTubeId", youTubeId, handleUpdateYoutubeId, clearYoutubeId)}
+                                </Box>
 
                 <Box
                     sx={{
@@ -170,7 +143,7 @@ export default function EditSongModal({ song }) {
                         disabled={!hasChanges}
                         onClick={handleConfirm}
                         sx={{
-                            bgcolor: hasChanges ? "#888" : "#cccccc",
+                            bgcolor: hasChanges ? "#333" : "#cccccc",
                             color: "white",
                             px: 4,
                             py: 1,

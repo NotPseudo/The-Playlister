@@ -664,13 +664,14 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setEditSong = (song) => {
+        console.log("setEditSong: " + JSON.stringify(song))
         storeReducer({
             type: GlobalStoreActionType.SET_EDIT_SONG,
             payload: {song: song}
         })
     }
 
-    store.editSong = (songId, title, artist, year, youTubeId) => {
+    store.performEditSong = (songId, title, artist, year, youTubeId) => {
         async function asyncEditSong(songId, title, artist, year, youTubeId) {
             const response = await storeRequestSender.updateSongById(songId, title, artist, year, youTubeId);
             let updatedSong = store.songResults.find(s => s._id === songId);
@@ -684,8 +685,8 @@ function GlobalStoreContextProvider(props) {
                 })
             }
         }
-        
-    }
+        asyncEditSong(songId, title, artist, year, youTubeId);
+    }  
     
     store.closeEditSong = () => {
         storeReducer({
