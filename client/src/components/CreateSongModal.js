@@ -95,7 +95,7 @@ export default function CreateSongModal() {
                     }}
                 >
                     <Typography variant="h6" fontWeight="bold">
-                        Edit Song
+                        Create Song
                     </Typography>
                 </Box>
 
