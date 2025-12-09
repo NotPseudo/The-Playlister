@@ -33,11 +33,20 @@ export default function CreateSongModal() {
 
     const handleConfirm = () => {
         store.sendCreateNewSong(title, artist, year, youTubeId);
+        clearFields();
     };
 
     const handleCancel = () => {
+        clearFields();
         store.hideModals();
     };
+
+    const clearFields = () => {
+        clearTitle();
+        clearArtist();
+        clearYear();
+        clearYoutubeId();
+    }
 
     const renderInput = (label, value, onChange, onClear) => (
         <TextField
