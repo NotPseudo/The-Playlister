@@ -27,7 +27,7 @@ const PlaylistCard = ({ playlist }) => {
     const handleClose = () => setExpanded(false);
 
     const handlePlay = () => {
-        store.openListInPLayer(playlist);
+        store.openListInPlayer(playlist);
     };
 
     const handleCopy = () => {
