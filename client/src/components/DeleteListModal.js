@@ -15,7 +15,7 @@ export default function DeleteListModal() {
 
     const handleConfirm = (event) => {
         event.stopPropagation();
-        store.deleteMarkedSong(); 
+        store.deleteMarkedList(); 
     };
 
     const handleCancel = (event) => {
@@ -23,73 +23,72 @@ export default function DeleteListModal() {
         store.hideModals();
     };
 
-    const style = {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "60vw",
-        maxWidth: 700,
-        bgcolor: "#ccffcc",
-        borderRadius: "8px",
-        boxShadow: 24,
-        p: 0,
-        outline: "none",
-    };
-
     return (
         <Modal
             open={store.currentModal == "DELETE_LIST"}
             onClose={handleCancel}
         >
-            <Box sx={style}>
+            <Box sx={{
+                position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: 600,
+                    bgcolor: "#d4ffcf",
+                    borderRadius: 2,
+                    boxShadow: 24,
+                    outline: "none",
+            }}>
 
                 <Box
                     sx={{
-                        width: "100%",
-                        bgcolor: "green",
+                        bgcolor: "#2e7d32",
                         color: "white",
+                        p: 2,
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
                         fontSize: "1.6rem",
-                        fontWeight: "bold",
-                        p: 1.5,
-                        borderTopLeftRadius: "8px",
-                        borderTopRightRadius: "8px"
+                        fontWeight: 700,
                     }}
                 >
                     Delete Playlist
                 </Box>
 
-                <Box sx={{ p: 4, textAlign: "center" }}>
+                <Box sx={{ p: 4 }}>
                     <Typography
                         variant="h4"
-                        sx={{ mb: 2, fontWeight: "bold" }}
+                        sx={{ fontWeight: 700,
+                            mb: 2,
+                            lineHeight: 1.3, }}
                     >
                         Are you sure you want to delete the{" "}
                         {store.deleteList?.name} playlist?
                     </Typography>
 
-                    <Typography variant="h6" sx={{ mb: 5 }}>
+                    <Typography variant="h6" sx={{ mb: 4, opacity: 0.8 }}>
                         Doing so means it will be permanently removed.
                     </Typography>
 
                     <Box
                         sx={{
                             display: "flex",
-                            justifyContent: "space-evenly",
-                            mt: 4
+                            justifyContent: "space-between",
+                            mt: 2,
                         }}
                     >
                         <Button
                             variant="contained"
                             onClick={handleConfirm}
                             sx={{
-                                bgcolor: "black",
+                                bgcolor: "#1b5e20",
                                 color: "white",
                                 px: 4,
-                                py: 1.5,
-                                fontSize: "1.1rem",
+                                py: 1.2,
+                                fontSize: "1.2rem",
                                 borderRadius: 3,
-                                "&:hover": { bgcolor: "#333" }
+                                "&:hover": {
+                                    bgcolor: "#144a18",
+                                }
                             }}
                         >
                             Delete Playlist
@@ -99,13 +98,15 @@ export default function DeleteListModal() {
                             variant="contained"
                             onClick={handleCancel}
                             sx={{
-                                bgcolor: "black",
+                                bgcolor: "#333",
                                 color: "white",
                                 px: 4,
-                                py: 1.5,
-                                fontSize: "1.1rem",
+                                py: 1.2,
+                                fontSize: "1.2rem",
                                 borderRadius: 3,
-                                "&:hover": { bgcolor: "#333" }
+                                "&:hover": {
+                                    bgcolor: "#222",
+                                }
                             }}
                         >
                             Cancel

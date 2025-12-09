@@ -4,6 +4,8 @@ import PlaylistSearchTool from "../components/PlaylistSearchTool";
 import PlaylistResults from "../components/PlaylistResults";
 import GlobalStoreContext from "../store";
 
+import {CreateSongModal, DeleteListModal, DeleteSongModal, EditPlaylistModal, EditSongModal} from './index.js'
+
 const PlaylistsScreen = () => {
 
     const { store } = useContext(GlobalStoreContext)
@@ -45,6 +47,9 @@ const PlaylistsScreen = () => {
             >
                 <PlaylistResults />
             </Box>
+
+            <DeleteListModal/>
+            <EditPlaylistModal/>
         </Box>
     );
 };

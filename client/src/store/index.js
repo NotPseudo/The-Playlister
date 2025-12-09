@@ -370,6 +370,13 @@ function GlobalStoreContextProvider(props) {
         asyncFindOwned();
     }
 
+    store.clearSongs = () => {
+        storeReducer({
+            type: GlobalStoreActionType.SEARCH_AND_LOAD_SONGS,
+            payload: {songs: []}
+        })
+    }
+
     store.setListSortOrder = (sortType) => {
         let newSort = store.sortListResults(sortType, store.playlistResults);
         storeReducer({

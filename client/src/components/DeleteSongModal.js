@@ -29,7 +29,7 @@ export default function DeleteSongModal() {
                     bgcolor: "#d4ffcf",
                     borderRadius: 2,
                     boxShadow: 24,
-                    outline: "none",
+                    outline: "none"
                 }}
             >
                 <Box
@@ -80,7 +80,7 @@ export default function DeleteSongModal() {
                                 borderRadius: 3,
                                 "&:hover": {
                                     bgcolor: "#144a18",
-                                },
+                                }
                             }}
                             onClick={handleConfirm}
                         >
@@ -98,7 +98,7 @@ export default function DeleteSongModal() {
                                 borderRadius: 3,
                                 "&:hover": {
                                     bgcolor: "#222",
-                                },
+                                }
                             }}
                             onClick={handleCancel}
                         >
