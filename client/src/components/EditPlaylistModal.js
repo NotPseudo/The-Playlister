@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
     Modal,
     Box,
@@ -12,15 +12,24 @@ import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import AddIcon from "@mui/icons-material/Add";
+import { useNavigate } from "react-router-dom";
 
 import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
+import ListSongCard from "./ListSongCard";
 
-export default function EditPlaylistModal({ open, onClose, playlist }) {
+export default function EditPlaylistModal() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    const [listName, setListName] = useState(playlist?.name || "");
+    const [listName, setListName] = useState(store.editPlaylist?.name || "");
+
+    useEffect(() => {
+            if (store.currentModal === "EDIT_LIST" && store.editList) {
+                setListName(store.editList.name)
+                console.log("Modal opened with list:", store.editList);
+            }
+        }, [store.currentModal]);
 
     // Responds to user typing
     const handleUpdateListName = (event) => {
@@ -31,50 +40,49 @@ export default function EditPlaylistModal({ open, onClose, playlist }) {
         setListName("");
     };
 
+    const navigate = useNavigate();
+
     const handleAddSongs = () => {
-        store.goToSongCatalogFromPlaylist(playlist._id);
+        store.hideModals();
+        navigate("/songs")
     };
 
     const handleUndo = () => {
-        store.undoPlaylistChange(playlist._id);
+        store.undo();
     };
 
     const handleRedo = () => {
-        store.redoPlaylistChange(playlist._id);
+        store.redo();
     };
 
     const handleClose = () => {
-        onClose();
+        store.hideModals();
     };
 
     return (
-        <Modal open={store.currentModal === "EDIT_LIST"} onClose={handleClose}>
+        <Modal open={store.currentModal === "EDIT_LIST"}>
             <Box
                 sx={{
                     position: "absolute",
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    width: "80%",
-                    maxWidth: "900px",
-                    bgcolor: "#ccffcc",
-                    borderRadius: "8px",
+                    width: 600,
+                    bgcolor: "#d4ffcf",
+                    borderRadius: 2,
                     boxShadow: 24,
                     outline: "none",
-                    display: "flex",
-                    flexDirection: "column",
                 }}
             >
-                {/* HEADER BAR */}
                 <Box
                     sx={{
-                        width: "100%",
-                        bgcolor: "#2E7D32",
+                        bgcolor: "#2e7d32",
                         color: "white",
-                        px: 2,
-                        py: 1,
-                        borderTopLeftRadius: "8px",
-                        borderTopRightRadius: "8px",
+                        p: 2,
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                        fontSize: "1.6rem",
+                        fontWeight: 700,
                     }}
                 >
                     <Typography variant="h6" fontWeight="bold">
@@ -138,22 +146,12 @@ export default function EditPlaylistModal({ open, onClose, playlist }) {
                         pb: 2,
                     }}
                 >
-                    {/*  
-                        ListSongCard components go here  
-                        (You said not to include their JSX yet)
-                    */}
 
-                    {playlist?.songs?.map((song, index) => (
-                        <div key={song._id}>
-                            {/* Placeholder — will fill in later */}
-                            <Typography>
-                                {index + 1}. {song.title} ({song.year})
-                            </Typography>
-                        </div>
+                    {store.editList?.songs?.map((song, index) => (
+                        <ListSongCard key={song._id} song={song} index={index}></ListSongCard>
                     ))}
                 </Box>
 
-                {/* FOOTER BUTTONS */}
                 <Box
                     sx={{
                         px: 2,
@@ -166,6 +164,7 @@ export default function EditPlaylistModal({ open, onClose, playlist }) {
                     <Box sx={{ display: "flex", gap: 2 }}>
                         <Button
                             onClick={handleUndo}
+                            disabled={!store.canUndo()}
                             variant="contained"
                             sx={{
                                 bgcolor: "#6A4FB6",
@@ -178,6 +177,7 @@ export default function EditPlaylistModal({ open, onClose, playlist }) {
 
                         <Button
                             onClick={handleRedo}
+                            disabled={!store.canRedo()}
                             variant="contained"
                             sx={{
                                 bgcolor: "#6A4FB6",

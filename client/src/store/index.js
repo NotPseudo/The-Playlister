@@ -323,8 +323,10 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.HIDE_MODALS: {
                 return setStore({
                     ...store,
-                    currentModal: CurrentModal.NONE
-                });
+                    playlistResults: payload.playlists,
+                    recentEditLists: payload.recentlyEdited,
+                    currentModal: null
+                })
             }
 
             default:
@@ -751,10 +753,18 @@ function GlobalStoreContextProvider(props) {
     store.hideModals = () => {
         auth.error = null;
         tps.clearAllTransactions();
-        storeReducer({
-            type: GlobalStoreActionType.HIDE_MODALS,
-            payload: {}
-        });    
+        async function asyncFindOwned() {
+            const response = await storeRequestSender.searchOwnedPlaylists();
+            if (response.data.success) {
+                let recentEdit = response.data.playlists.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                let sorted = store.sortListResults(store.listSortType, response.data.playlists);
+                storeReducer({
+                    type: GlobalStoreActionType.HIDE_MODALS,
+                    payload: {playlists: sorted, recentlyEdited: recentEdit}
+                })
+            }
+        }
+        asyncFindOwned();
     }
 
     store.isDeleteListModalOpen = () => {

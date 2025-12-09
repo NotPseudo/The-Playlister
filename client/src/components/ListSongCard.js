@@ -26,11 +26,36 @@ export default function ListSongCard({ song, index }) {
         store.addRemoveSongFromListTransaction(song, index);
     };
 
+    function handleDragStart(event) {
+        event.dataTransfer.setData("song", index);
+    }
+
+    function handleDragOver(event) {
+        event.preventDefault();
+    }
+
+    function handleDragEnter(event) {
+        event.preventDefault();
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        let targetIndex = index;
+        let sourceIndex = Number(event.dataTransfer.getData("song"));
+
+        // UPDATE THE LIST
+        store.addMoveSongTransaction(sourceIndex, targetIndex);
+    }
+
     return (
         <Paper
             elevation={2}
             sx={{
-                width: "100%",
+                width: "94%",
                 backgroundColor: "#FFF7C2",
                 borderRadius: "8px",
                 padding: "12px 16px",
@@ -40,6 +65,12 @@ export default function ListSongCard({ song, index }) {
                 marginBottom: "12px",
                 cursor: "grab"
             }}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            draggable="true"
         >
             <Typography
                 variant="h6"

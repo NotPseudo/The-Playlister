@@ -160,7 +160,7 @@ export const removeSongFromPlaylist = async(playlistId, songId) => {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            updateType: "CHANGE_NAME",
+            updateType: "REMOVE_SONG",
             songId : songId
         })  
     });
