@@ -13,6 +13,7 @@ const SongsScreen = () => {
 
     useEffect(() => {
         store.findAndLoadOwnedLists();
+        store.clearSongs();
     }, []);
 
     return (

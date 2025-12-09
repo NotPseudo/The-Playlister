@@ -52,7 +52,7 @@ export default function CatalogSongCard({ song }) {
 
 
     const handleClickOnPlaylist = (playlist) => {
-        store.addSongToPlaylist(playlist._id, song._id, playlist.songs.length);
+        store.addSongToPlaylist(playlist, song._id, playlist.songs.length);
         handleClose();
     };
     
