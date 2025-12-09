@@ -73,7 +73,7 @@ export default function CatalogSongCard({ song }) {
 
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                        {song.title} by {song.artist} ({song.year}) and ({auth.loggedIn})
+                        {song.title} by {song.artist} ({song.year})
                     </Typography>
 
                     {auth.loggedIn && <IconButton onClick={handleExpandMain}>

@@ -253,7 +253,7 @@ updatePlaylist = async (req, res) => {
             error: 'You must provide a body to update',
         })
     }
-    console.log("updatePlaylist: " + JSON.stringify(body));
+    // console.log("updatePlaylist: " + JSON.stringify(body));
     console.log("req.params: " + JSON.stringify(req.params));
 
     if (!await doesUserIdOwnPlaylistId(req.userId, req.params.id)) return res.status(400).json({success: false, error: "User does not own the playlist"});
