@@ -81,7 +81,7 @@ createSong = async (req, res) => {
     if (!song) {
         return res.status(400).json({ success: false, error: "Song not created" })
     }
-    let returnSong = songInstanceToJSON(song);
+    let returnSong = await songInstanceToJSON(song);
     console.log("In createSong after song.toJSON(): " + JSON.stringify(returnSong));
     return res.status(201).json({ success: true, song: returnSong })
 }

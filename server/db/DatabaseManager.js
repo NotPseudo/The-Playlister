@@ -105,7 +105,7 @@ class DatabaseManager {
     }
 
     async updatePlaylist(playlistId, newName, newSongs) {
-        console.log("updatePlaylist new playlist: " + playlist);
+//        console.log("updatePlaylist new playlist: " + playlist);
         let updateOptions = {};
         if (isDefined(newName) || isDefined(newSongs)) {
             updateOptions.$set = {};
