@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
     Modal,
     Box,
@@ -13,52 +13,78 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
-import CloseIcon from "@mui/icons-material/Close";
+
+import YouTube from 'react-youtube'
+
+import PlayerSongCard from "./PlayerSongCard";
 
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 
-export default function PlayerModal({ open, onClose }) {
+export default function PlayerModal() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
     const [playingStatus, setPlayingStatus] = useState("PAUSED");
+    const [index, setIndex] = useState(0);
+    const [songId, setSongId] = useState("yUC0mvx2RgE");
 
-    // ------------------------------
-    // Button Handlers
-    // ------------------------------
+    const [player, setPlayer] = useState(null);
+
+    const onReady = (event) => {
+        setPlayer(event.target);
+    };
+
     const handlePlayButtonClick = () => {
         if (playingStatus === "PAUSED") {
             setPlayingStatus("PLAYING");
-            store.playCurrentSong();
+            //player.playVideo();
         } else {
             setPlayingStatus("PAUSED");
-            store.pauseCurrentSong();
+            //player.pauseVideo();
         }
     };
 
+    let playlist = store.playingList;
+
+    const setPlaying = (index) => {
+        console.log("Inside setPlaying")
+        setSongId(playlist.songs[index].youTubeId);
+        store.setCatalogPlayingSong(playlist.songs[index]);
+        console.log("songId: " + songId)
+        setIndex(index);
+    }
+
     const handleSkip = () => {
-        store.playNextSong();
+        let newIndex = (index + 1) % playlist.songs.length;
+        setPlaying(newIndex);
     };
 
     const handlePrevious = () => {
-        store.playPreviousSong();
+        let newIndex = (index - 1) % playlist.songs.length;
+        setPlaying(newIndex)
     };
 
     const handleClose = () => {
         setPlayingStatus("PAUSED");
-        store.pauseCurrentSong();
-        onClose();
+        store.closePlayingList();
     };
 
-    // ------------------------------
-    // Playlist + Song Data
-    // ------------------------------
-    const playlist = store.currentPlaylist;
-    const songs = playlist?.songs || [];
+    const handleVidEnd = () => {
+        handleSkip();
+    }
+
+    const opts = {
+      height: '310',
+      width: '690',
+      playerVars: {
+        // https://developers.google.com/youtube/player_parameters
+        autoplay: 1,
+      },
+    };
 
     return (
-        <Modal open={open} onClose={handleClose}>
+        <Modal open={store.currentModal === "PLAYER"} onClose={handleClose}>
             <Box
                 sx={{
                     position: "absolute",
@@ -74,10 +100,9 @@ export default function PlayerModal({ open, onClose }) {
                     flexDirection: "column"
                 }}
             >
-                {/* ---------------- HEADER BAR ---------------- */}
                 <Box
                     sx={{
-                        bgcolor: "#2e7d32", // green header
+                        bgcolor: "#2e7d32",
                         color: "white",
                         padding: "10px 20px",
                         fontSize: "22px",
@@ -87,36 +112,33 @@ export default function PlayerModal({ open, onClose }) {
                     Play Playlist
                 </Box>
 
-                {/* ---------------- MAIN CONTENT ROW ---------------- */}
                 <Box sx={{ display: "flex", flexGrow: 1, overflow: "hidden" }}>
 
-                    {/* ---------- LEFT SIDE (65%) ---------- */}
                     <Box
                         sx={{
-                            width: "65%",
+                            width: "50%",
                             padding: 2,
                             overflow: "hidden",
                             display: "flex",
                             flexDirection: "column"
                         }}
                     >
-                        {/* Playlist Info Row */}
                         <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
                             <Avatar
-                                src={playlist?.ownerAvatar}
+                                src={store.playingList?.owner.avatar}
                                 sx={{ width: 48, height: 48, marginRight: 2 }}
                             />
+                            {/* {console.log("in return: " + JSON.stringify(store.playingList))}; */}
                             <Box>
-                                <Typography variant="h6">{playlist?.name}</Typography>
+                                <Typography variant="h6">{store.playingList?.name}</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    {playlist?.ownerUsername}
+                                    {store.playingList?.owner.username}
                                 </Typography>
                             </Box>
                         </Box>
 
                         <Divider sx={{ mb: 2 }} />
 
-                        {/* Scrollable Song List */}
                         <Box
                             sx={{
                                 flexGrow: 1,
@@ -124,18 +146,17 @@ export default function PlayerModal({ open, onClose }) {
                                 paddingRight: "8px"
                             }}
                         >
-                            {songs.map((song, index) => (
+                            {store.playingList?.songs?.map((song, index) => (
                                 <Box key={song._id} sx={{ mb: 1 }}>
-                                    {/* PlayerSongCard JSX goes here later */}
+                                    <PlayerSongCard song={song} index={index} onclick={setPlaying} onReady={onReady}/>
                                 </Box>
                             ))}
                         </Box>
                     </Box>
 
-                    {/* ---------- RIGHT SIDE (35%) ---------- */}
                     <Box
                         sx={{
-                            width: "35%",
+                            width: "50%",
                             padding: 2,
                             display: "flex",
                             flexDirection: "column",
@@ -154,17 +175,9 @@ export default function PlayerModal({ open, onClose }) {
                                 overflow: "hidden"
                             }}
                         >
-                            {store.currentSong && (
-                                <iframe
-                                    width="100%"
-                                    height="100%"
-                                    src={`https://www.youtube.com/embed/${store.currentSong.youTubeId}`}
-                                    title="YouTube video player"
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                ></iframe>
-                            )}
+                            {console.log("Right before youtube: " + songId)}
+                            
+                            <YouTube videoId={songId} onEnd={handleVidEnd} opts={opts}/>
                         </Box>
 
                         {/* Player Controls */}

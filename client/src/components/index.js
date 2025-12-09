@@ -12,6 +12,7 @@ import HomeScreen from './HomeScreen'
 import ListCard from './PlaylistCard'
 import LoginScreen from './LoginScreen'
 import PlayerModal from './PlayerModal'
+import PlayerSongCard from './PlayerSongCard'
 import PlaylistCard from './PlaylistCard'
 import PlaylistResults from './PlaylistResults'
 import PlaylistSearchTool from './PlaylistSearchTool'
@@ -40,6 +41,7 @@ export {
     ListCard, 
     LoginScreen,
     PlayerModal,
+    PlayerSongCard,
     PlaylistCard,
     PlaylistResults,
     PlaylistSearchTool,

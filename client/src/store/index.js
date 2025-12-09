@@ -238,7 +238,8 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SEARCH_AND_LOAD_SONGS: {
                 return setStore({
                     ...store,
-                    songResults: payload.songs
+                    songResults: payload.songs,
+                    catalogPlayingSong: null
                 });
             }
             case GlobalStoreActionType.SORT_SONGS: {
@@ -305,10 +306,11 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_PLAYING_LIST: {
                 return setStore({
                     ...store,
-                    playingList: payload.playlist,
+                    currentModal: CurrentModal.PLAYER,
+                    playingList: payload.list,
                     playingSongIndex: 0,
 
-                    currentModal: CurrentModal.PLAYER
+                    
                 });
             }
             case GlobalStoreActionType.CLOSE_PLAYING_LIST: {
@@ -737,6 +739,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setCatalogPlayingSong = (song) => {
+        storeRequestSender.listenToSong(song._id);
         storeReducer({
             type: GlobalStoreActionType.SET_CATALOG_PLAYING_SONG,
             payload: {song: song}
@@ -744,9 +747,18 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.openListInPlayer = (playlist) => {
+        console.log("openListInPlayer: " + JSON.stringify(playlist));
+        storeRequestSender.listenToPlaylist(playlist._id);
         storeReducer({
             type: GlobalStoreActionType.SET_PLAYING_LIST,
             payload: {list: playlist}
+        })
+    }
+
+    store.closePlayingList = () => {
+        storeReducer({
+            type: GlobalStoreActionType.CLOSE_PLAYING_LIST,
+            payload: {}
         })
     }
 
