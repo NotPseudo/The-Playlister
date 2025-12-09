@@ -77,7 +77,7 @@ class DatabaseManager {
         //console.log("options: " + JSON.stringify(options));
         try {
             let user = await User.findOne(options);
-            console.log("user: " + JSON.stringify(user));
+            //console.log("user: " + JSON.stringify(user));
             return user;
         } catch (err) {
             return null;
@@ -135,7 +135,7 @@ class DatabaseManager {
 
     async removeSongFromPlaylist(playlistId, removeSong) {
         let updateOptions = {};
-        if (isDefined(newSong)) {
+        if (isDefined(removeSong)) {
             updateOptions.$pull = {songs : removeSong};
         }
         try {

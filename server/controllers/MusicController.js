@@ -8,7 +8,12 @@ const {isDefined} = require('../util/Util')
 
 async function doesUserIdOwnPlaylistId(userId, playlistId) {
     let user = await DB.findUser({_id: userId});
-    if (!user) return false;
+    if (!user) {
+        console.log("User not found")
+        return false;
+    }
+    console.log("User has playlists: " + user.playlists);
+    console.log("Testing playlist " + playlistId);
     return user.playlists.some(id => id.equals(playlistId));
 }
 
@@ -38,6 +43,9 @@ createPlaylist = async (req, res) => {
     console.log("playlist: " + JSON.stringify(playlist));
     if (!playlist) {
         return res.status(400).json({ success: false, error: "Playlist not created" })
+    }
+    for (let s of songs) {
+        await DB.addPlaylistToSong(s, playlist._id);
     }
     let returnPlaylist = await playlistInstanceToJSON(playlist);
     console.log("In createPlaylist after playlist.toJSON(): " + JSON.stringify(returnPlaylist));
@@ -126,6 +134,7 @@ userInstanceToJSON = (instance) => {
 songInstanceToJSON = async (instance) => {
     let songJSON = instance.toJSON();
     let user = await DB.findUser({_id: instance.owner});
+    console.log("songInstanceTOJSON user: " + user);
     songJSON.owner = userInstanceToJSON(user);
     //songJSON.ownerName = user.username;
     songJSON.playlists = instance.playlists.length;
@@ -137,12 +146,16 @@ playlistInstanceToJSON = async (instance) => {
     let songsJSON = [];
     if (instAsObj.songsData) {
         for (let s of instAsObj.songs) {
-            songsJSON.push(await songInstanceToJSON(s));
+            console.log("top s: " + s);
+            let inst = await DB.findSong({_id: s});
+            songsJSON.push(await songInstanceToJSON(inst));
         }
     } else {
         let populated = await instance.populate("songs");
         for (let s of populated.songs) {
-            songsJSON.push(await songInstanceToJSON(s));
+            console.log("bottom s: " + s);
+            let inst = await DB.findSong({_id: s});
+            songsJSON.push(await songInstanceToJSON(inst));
         }
     }
     let user = await DB.findUser({_id: instAsObj.owner});
